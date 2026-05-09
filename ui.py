@@ -190,7 +190,34 @@ def render_dashboard(
                 st.metric("Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
             with sub_col4:
                 st.metric("Durasi Terakhir", latest_data.get("duration", "-"))
+# ==================================================
+    # HISTORY TITLE
+    # ==================================================
+    st.markdown("""
+    <div class="section-title">
+    RIWAYAT DISTRIBUSI AIR
+    </div>
+    """, unsafe_allow_html=True)
 
+    # BARIS INI YANG KEMUNGKINAN TERHAPUS:
+    history_df = pd.DataFrame(history_data)
+
+    # ==================================================
+    # SHOW HISTORY
+    # ==================================================
+    if not history_df.empty:
+
+        st.dataframe(
+            history_df,
+            use_container_width=True,
+            height=300
+        )
+
+    else:
+
+        st.info(
+            "Belum ada riwayat distribusi"
+        )
     # ==================================================
     # SHOW HISTORY
     # ==================================================
