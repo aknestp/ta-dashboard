@@ -1,3 +1,5 @@
+# ui.py
+
 import streamlit as st
 import pandas as pd
 import requests
@@ -10,10 +12,12 @@ def load_css():
     st.markdown("""
     <style>
 
+    /* BACKGROUND */
     .stApp{
         background-color:#dfe8d5;
     }
 
+    /* MAIN */
     .block-container{
         padding-top:1rem;
         padding-bottom:1rem;
@@ -24,9 +28,9 @@ def load_css():
     .top-header{
         background:#1b6b3a;
         padding:20px;
-        border-radius:6px;
-        margin-bottom:18px;
+        border-radius:4px;
         border:2px solid #245c35;
+        margin-bottom:20px;
     }
 
     .top-title{
@@ -38,7 +42,7 @@ def load_css():
 
     .top-subtitle{
         color:#d7f0dc;
-        font-size:16px;
+        font-size:15px;
         margin-top:5px;
     }
 
@@ -54,32 +58,55 @@ def load_css():
         margin-bottom:10px;
     }
 
-    /* CARD */
-    [data-testid="stVerticalBlockBorderWrapper"]{
+    /* PANEL */
+    .panel{
         background:#edf4e8;
         border:2px solid #9eb397;
+        padding:15px;
         border-radius:4px;
-        padding:10px;
-        box-shadow:none;
+        min-height:420px;
     }
 
-    /* METRIC */
-    [data-testid="stMetric"]{
-        background:#f6faf2;
-        border:1px solid #b7c7b0;
+    /* PANEL HEADER */
+    .panel-header{
+        background:#1b6b3a;
+        color:white;
         padding:10px;
+        font-size:22px;
+        font-weight:bold;
+        margin-bottom:15px;
         border-radius:2px;
     }
 
-    /* METRIC LABEL */
-    [data-testid="stMetricLabel"]{
-        color:#245c35;
-        font-weight:bold;
+    /* STATUS */
+    .status-box{
+        font-size:40px;
+        font-weight:900;
+        color:#1b3d22;
+        margin-bottom:15px;
     }
 
-    /* METRIC VALUE */
-    [data-testid="stMetricValue"]{
-        color:#1b3d22;
+    /* MINI BOX */
+    .mini-box{
+        background:#f8fbf5;
+        border:1px solid #b8c7b0;
+        padding:15px;
+        margin-bottom:12px;
+        border-radius:2px;
+    }
+
+    /* MINI TITLE */
+    .mini-title{
+        color:#245c35;
+        font-size:14px;
+        font-weight:bold;
+        margin-bottom:8px;
+    }
+
+    /* MINI VALUE */
+    .mini-value{
+        color:#17351e;
+        font-size:30px;
         font-weight:900;
     }
 
@@ -105,7 +132,9 @@ def load_css():
         border:none;
         border-radius:4px;
         font-weight:bold;
-        padding:12px;
+        padding:14px;
+        width:100%;
+        font-size:16px;
     }
 
     .stButton > button:hover{
@@ -146,11 +175,11 @@ def render_dashboard(
     <div class="top-header">
 
     <div class="top-title">
-    SISTEM PERINGATAN DINI KEDATANGAN AIR
+    DASHBOARD DISTRIBUSI AIR
     </div>
 
     <div class="top-subtitle">
-    Monitoring distribusi air berbasis IoT dan Machine Learning
+    Sistem Peringatan Dini Kedatangan Air Berbasis IoT dan Machine Learning
     </div>
 
     </div>
@@ -162,49 +191,86 @@ def render_dashboard(
     col1, col2 = st.columns(2)
 
     # ==================================================
-    # STATUS CARD
+    # STATUS PANEL
     # ==================================================
     with col1:
 
-        with st.container(border=True):
+        st.markdown(f"""
+        <div class="panel">
 
-            st.subheader(status_text)
+            <div class="panel-header">
+                STATUS DISTRIBUSI
+            </div>
 
-            st.metric(
-                "Status Sensor",
-                sensor_status
-            )
+            <div class="status-box">
+                {status_text}
+            </div>
 
-            st.metric(
-                "Waktu Deteksi",
-                latest_data.get(
-                    "time",
-                    "-"
-                )
-            )
+            <div class="mini-box">
+
+                <div class="mini-title">
+                    STATUS SENSOR
+                </div>
+
+                <div class="mini-value">
+                    {sensor_status}
+                </div>
+
+            </div>
+
+            <div class="mini-box">
+
+                <div class="mini-title">
+                    WAKTU DETEKSI
+                </div>
+
+                <div class="mini-value">
+                    {latest_data.get("time", "-")}
+                </div>
+
+            </div>
+
+        </div>
+        """, unsafe_allow_html=True)
 
     # ==================================================
-    # INFO CARD
+    # INFO PANEL
     # ==================================================
     with col2:
 
-        with st.container(border=True):
+        st.markdown(f"""
+        <div class="panel">
 
-            st.metric(
-                "Kedatangan Air Terakhir",
-                latest_data.get(
-                    "last_water_time",
-                    "-"
-                )
-            )
+            <div class="panel-header">
+                INFORMASI TERAKHIR
+            </div>
 
-            st.metric(
-                "Durasi Distribusi Terakhir",
-                latest_data.get(
-                    "duration",
-                    "-"
-                )
-            )
+            <div class="mini-box">
+
+                <div class="mini-title">
+                    KEDATANGAN AIR TERAKHIR
+                </div>
+
+                <div class="mini-value">
+                    {latest_data.get("last_water_time", "-")}
+                </div>
+
+            </div>
+
+            <div class="mini-box">
+
+                <div class="mini-title">
+                    DURASI DISTRIBUSI TERAKHIR
+                </div>
+
+                <div class="mini-value">
+                    {latest_data.get("duration", "-")}
+                </div>
+
+            </div>
+
+        </div>
+        """, unsafe_allow_html=True)
 
     # ==================================================
     # HISTORY TITLE
@@ -252,6 +318,8 @@ def render_dashboard(
         not chart_df.empty
         and "rms" in chart_df.columns
     ):
+
+        chart_df = chart_df.tail(30)
 
         st.line_chart(
             chart_df["rms"],
@@ -354,6 +422,6 @@ def render_dashboard(
     # ==================================================
     st.markdown("""
     <div class="footer">
-    Sistem Peringatan Dini Kedatangan Air Distribusi Berbasis IoT dan Machine Learning
+    Sistem Monitoring Distribusi Air Realtime
     </div>
     """, unsafe_allow_html=True)
