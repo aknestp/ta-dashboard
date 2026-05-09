@@ -7,7 +7,7 @@ from datetime import datetime
 # ======================================
 # CONFIG
 # ======================================
-SERVER_URL = "https://ta-backend-production-f459.up.railway.app"
+SERVER_URL = "https://ta-backend-production-f459.up.railway.app/"
 
 st.set_page_config(
     page_title="Sistem Peringatan Dini Air",
@@ -218,57 +218,65 @@ else:
     st.warning("Data RMS belum tersedia")
 
 # ======================================
-# OPERATOR PANEL
+# TOMBOL OPERATOR
 # ======================================
-st.markdown(
-    """
-    <div class='card'>
-        <div class='section-title'>Panel Operator</div>
-        <div class='subtitle'>Kirim informasi gangguan distribusi kepada warga</div>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
 
-# Popup sederhana menggunakan dialog Streamlit
-@st.dialog("Konfirmasi Operator")
-def operator_popup():
+# Simpan state popup
+if "show_popup" not in st.session_state:
+    st.session_state.show_popup = False
 
-    password = st.text_input(
-        "Masukkan Password Operator",
-        type="password"
-    )
-
-    st.warning(
-        "Pesan yang akan dikirim: Distribusi air mengalami gangguan sementara"
-    )
-
-    if st.button("Kirim Informasi Gangguan"):
-
-        if password == "admin123":
-
-            try:
-                response = requests.post(
-                    f"{SERVER_URL}/send_warning",
-                    json={
-                        "message": "Distribusi air mengalami gangguan sementara"
-                    },
-                    timeout=5
-                )
-
-                if response.status_code == 200:
-                    st.success("Informasi gangguan berhasil dikirim")
-                else:
-                    st.error("Gagal mengirim informasi")
-
-            except Exception as e:
-                st.error(f"Error: {e}")
-
-        else:
-            st.error("Password operator salah")
-
-# Tombol utama
+# Klik tombol buka popup
 if st.button("⚠ Informasi Gangguan Distribusi"):
+    st.session_state.show_popup = True
+
+# Popup operator
+if st.session_state.show_popup:
+
+    @st.dialog("Konfirmasi Operator")
+    def operator_popup():
+
+        password = st.text_input(
+            "Masukkan Password Operator",
+            type="password",
+            key="operator_password"
+        )
+
+        st.warning(
+            "Pesan yang akan dikirim: Distribusi air mengalami gangguan sementara"
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+            if st.button("Kirim", use_container_width=True):
+
+                if password == "admin123":
+
+                    try:
+                        response = requests.post(
+                            f"{SERVER_URL}/send_warning",
+                            json={
+                                "message": "Distribusi air mengalami gangguan sementara"
+                            },
+                            timeout=5
+                        )
+
+                        if response.status_code == 200:
+                            st.success("Informasi gangguan berhasil dikirim")
+                            st.session_state.show_popup = False
+                        else:
+                            st.error("Gagal mengirim informasi")
+
+                    except Exception as e:
+                        st.error(f"Error: {e}")
+
+                else:
+                    st.error("Password operator salah")
+
+        with col2:
+            if st.button("Batal", use_container_width=True):
+                st.session_state.show_popup = False
+
     operator_popup()
 
 # ======================================
