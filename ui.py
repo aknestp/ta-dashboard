@@ -189,22 +189,38 @@ def render_dashboard(
     """, unsafe_allow_html=True)
 
     # ==================================================
-    # TOP SECTION
+    # BANNER STATUS UTAMA (DIPISAH KE ATAS)
+    # ==================================================
+    is_not_flowing = "TIDAK" in status_text.upper()
+    icon_status = "🔴" if is_not_flowing else "🟢"
+    color_status = "#c0392b" if is_not_flowing else "#0A6847"
+    border_color = "#e74c3c" if is_not_flowing else "#7ABA78"
+    
+    st.markdown(f"""
+    <div style="text-align: center; background-color: #ffffff; padding: 15px; 
+                border-radius: 12px; margin-bottom: 20px; border: 2px solid {border_color};
+                box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
+        <h2 style="color: {color_status}; margin: 0; font-weight: 900; letter-spacing: 1px;">
+            {icon_status} {status_text.upper()}
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ==================================================
+    # TOP SECTION (KOTAK KIRI DAN KANAN YANG SIMETRIS)
     # ==================================================
     col1, col2 = st.columns(2)
 
-    # Kolom Kiri: Status Utama
+    # Kolom Kiri: Informasi Sensor
     with col1:
         with st.container(border=True):
-            # Penambahan ikon otomatis berdasarkan status
-            icon_status = "🔴" if "TIDAK" in status_text.upper() else "🟢"
-            st.markdown(f"### {icon_status} {status_text}")
+            st.markdown("### 📡 Status Sensor")
             
             sub_col1, sub_col2 = st.columns(2)
             with sub_col1:
-                st.metric("📡 Status Sensor", sensor_status)
+                st.metric("Koneksi", sensor_status)
             with sub_col2:
-                st.metric("⏱️ Waktu Deteksi", latest_data.get("time", "-"))
+                st.metric("Waktu Deteksi", latest_data.get("time", "-"))
 
     # Kolom Kanan: Informasi Riwayat Terakhir
     with col2:
@@ -213,9 +229,9 @@ def render_dashboard(
             
             sub_col3, sub_col4 = st.columns(2)
             with sub_col3:
-                st.metric("🌊 Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
+                st.metric("Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
             with sub_col4:
-                st.metric("⏳ Durasi Terakhir", latest_data.get("duration", "-"))
+                st.metric("Durasi Terakhir", latest_data.get("duration", "-"))
 
     # ==================================================
     # HISTORY TITLE
@@ -265,7 +281,7 @@ def render_dashboard(
     # ==================================================
     # WARNING BUTTON
     # ==================================================
-    st.markdown("<br>", unsafe_allow_html=True) # Spasi ekstra sebelum tombol
+    st.markdown("<br>", unsafe_allow_html=True) 
     if "show_popup" not in st.session_state:
         st.session_state.show_popup = False
 
