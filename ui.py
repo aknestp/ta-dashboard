@@ -65,7 +65,6 @@ def load_css():
         flex-direction: column;
         height: 100%;
         justify-content: space-between;
-}
     }
 
     /* METRIC */
@@ -170,10 +169,8 @@ def render_dashboard(
     # Kolom Kiri: Status Utama
     with col1:
         with st.container(border=True):
-            # Header Status dengan Icon (Opsional: tambahkan emoji agar lebih hidup)
             st.markdown(f"### {status_text}")
             
-            # Menggunakan sub-columns di dalam container agar metric berjejer rapi
             sub_col1, sub_col2 = st.columns(2)
             with sub_col1:
                 st.metric("Status Sensor", sensor_status)
@@ -190,7 +187,8 @@ def render_dashboard(
                 st.metric("Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
             with sub_col4:
                 st.metric("Durasi Terakhir", latest_data.get("duration", "-"))
-# ==================================================
+
+    # ==================================================
     # HISTORY TITLE
     # ==================================================
     st.markdown("""
@@ -199,38 +197,18 @@ def render_dashboard(
     </div>
     """, unsafe_allow_html=True)
 
-    # BARIS INI YANG KEMUNGKINAN TERHAPUS:
     history_df = pd.DataFrame(history_data)
 
     # ==================================================
-    # SHOW HISTORY
+    # SHOW HISTORY (Hanya satu kali)
     # ==================================================
     if not history_df.empty:
-
         st.dataframe(
             history_df,
             use_container_width=True,
             height=300
         )
-
     else:
-
-        st.info(
-            "Belum ada riwayat distribusi"
-        )
-    # ==================================================
-    # SHOW HISTORY
-    # ==================================================
-    if not history_df.empty:
-
-        st.dataframe(
-            history_df,
-            use_container_width=True,
-            height=300
-        )
-
-    else:
-
         st.info(
             "Belum ada riwayat distribusi"
         )
@@ -249,18 +227,12 @@ def render_dashboard(
     # ==================================================
     # SHOW CHART
     # ==================================================
-    if (
-        not chart_df.empty
-        and "rms" in chart_df.columns
-    ):
-
+    if (not chart_df.empty and "rms" in chart_df.columns):
         st.line_chart(
             chart_df["rms"],
             height=350
         )
-
     else:
-
         st.warning(
             "Data RMS belum tersedia"
         )
@@ -271,81 +243,40 @@ def render_dashboard(
     if "show_popup" not in st.session_state:
         st.session_state.show_popup = False
 
-    if st.button(
-        "⚠ INFORMASI GANGGUAN DISTRIBUSI"
-    ):
+    if st.button("⚠ INFORMASI GANGGUAN DISTRIBUSI"):
         st.session_state.show_popup = True
 
     # ==================================================
     # POPUP
     # ==================================================
     if st.session_state.show_popup:
-
         @st.dialog("Konfirmasi Operator")
         def popup_operator():
-
-            password = st.text_input(
-                "Masukkan Password Operator",
-                type="password"
-            )
-
-            st.warning(
-                "Pesan yang akan dikirim:\n\nDistribusi air mengalami gangguan sementara"
-            )
-
+            password = st.text_input("Masukkan Password Operator", type="password")
+            st.warning("Pesan yang akan dikirim:\n\nDistribusi air mengalami gangguan sementara")
+            
             col1, col2 = st.columns(2)
-
+            
             with col1:
-
-                if st.button(
-                    "Kirim Informasi",
-                    use_container_width=True
-                ):
-
+                if st.button("Kirim Informasi", use_container_width=True):
                     if password == "admin123":
-
                         try:
-
                             response = requests.post(
                                 f"{server_url}/send_warning",
-                                json={
-                                    "message":
-                                    "Distribusi air mengalami gangguan sementara"
-                                },
+                                json={"message": "Distribusi air mengalami gangguan sementara"},
                                 timeout=5
                             )
-
                             if response.status_code == 200:
-
-                                st.success(
-                                    "Informasi berhasil dikirim"
-                                )
-
+                                st.success("Informasi berhasil dikirim")
                                 st.session_state.show_popup = False
-
                             else:
-
-                                st.error(
-                                    "Gagal mengirim informasi"
-                                )
-
+                                st.error("Gagal mengirim informasi")
                         except Exception as e:
-
                             st.error(e)
-
                     else:
-
-                        st.error(
-                            "Password salah"
-                        )
-
+                        st.error("Password salah")
             with col2:
-
-                if st.button(
-                    "Batal",
-                    use_container_width=True
-                ):
-
+                if st.button("Batal", use_container_width=True):
                     st.session_state.show_popup = False
 
         popup_operator()
