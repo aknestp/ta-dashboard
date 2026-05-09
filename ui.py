@@ -3,7 +3,7 @@ import pandas as pd
 import requests
 
 # ==================================================
-# CSS
+# CSS (DIPERBARUI DENGAN MEDIA QUERY UNTUK HP)
 # ==================================================
 def load_css():
 
@@ -31,14 +31,14 @@ def load_css():
 
     .top-title{
         color:white;
-        font-size:42px;
+        font-size:42px; /* Ukuran default untuk PC */
         font-weight:900;
         letter-spacing:1px;
     }
 
     .top-subtitle{
         color:#d7f0dc;
-        font-size:16px;
+        font-size:16px; /* Ukuran default untuk PC */
         margin-top:5px;
     }
 
@@ -47,7 +47,7 @@ def load_css():
         background:#1b6b3a;
         color:white;
         padding:10px 15px;
-        font-size:24px;
+        font-size:24px; /* Ukuran default untuk PC */
         font-weight:bold;
         border-radius:4px;
         margin-top:20px;
@@ -127,6 +127,36 @@ def load_css():
         font-weight:bold;
     }
 
+    /* ==================================================
+       RESPONSIVE PADA LAYAR HANDPHONE / KECIL
+       ================================================== */
+    @media (max-width: 768px) {
+        .top-header {
+            padding: 15px;
+        }
+        .top-title {
+            font-size: 26px !important; /* Dikecilkan untuk HP */
+        }
+        .top-subtitle {
+            font-size: 13px !important; /* Dikecilkan untuk HP */
+        }
+        .section-title {
+            font-size: 18px !important; /* Dikecilkan untuk HP */
+            padding: 8px 12px;
+        }
+        /* Mengecilkan angka metric bawaan Streamlit di HP */
+        [data-testid="stMetricValue"] > div {
+            font-size: 1.5rem !important; 
+        }
+        /* Mengecilkan label text metric di HP */
+        [data-testid="stMetricLabel"] p {
+            font-size: 13px !important;
+        }
+        .footer {
+            font-size: 12px !important;
+        }
+    }
+
     </style>
     """, unsafe_allow_html=True)
 
@@ -200,7 +230,7 @@ def render_dashboard(
     history_df = pd.DataFrame(history_data)
 
     # ==================================================
-    # SHOW HISTORY (Hanya satu kali)
+    # SHOW HISTORY
     # ==================================================
     if not history_df.empty:
         st.dataframe(
