@@ -201,12 +201,15 @@ def render_dashboard(
     server_url
 ):
 
+    # ==================================================
+    # LOAD CSS
+    # ==================================================
     load_css()
 
     # ==================================================
-    # HEADER
+    # HEADER HTML
     # ==================================================
-    st.markdown("""
+    header_html = """
     <div class="top-header">
 
         <div class="top-title">
@@ -218,7 +221,12 @@ def render_dashboard(
         </div>
 
     </div>
-    """, unsafe_allow_html=True)
+    """
+
+    st.markdown(
+        header_html,
+        unsafe_allow_html=True
+    )
 
     # ==================================================
     # TOP SECTION
@@ -230,7 +238,7 @@ def render_dashboard(
     # ==================================================
     with col1:
 
-        html_status = f"""
+        status_html = f"""
         <div class="panel">
 
             <div class="panel-header">
@@ -269,7 +277,7 @@ def render_dashboard(
         """
 
         st.markdown(
-            html_status,
+            status_html,
             unsafe_allow_html=True
         )
 
@@ -278,7 +286,7 @@ def render_dashboard(
     # ==================================================
     with col2:
 
-        html_info = f"""
+        info_html = f"""
         <div class="panel">
 
             <div class="panel-header">
@@ -313,18 +321,23 @@ def render_dashboard(
         """
 
         st.markdown(
-            html_info,
+            info_html,
             unsafe_allow_html=True
         )
 
     # ==================================================
     # HISTORY TITLE
     # ==================================================
-    st.markdown("""
+    history_title = """
     <div class="section-title">
         RIWAYAT DISTRIBUSI AIR
     </div>
-    """, unsafe_allow_html=True)
+    """
+
+    st.markdown(
+        history_title,
+        unsafe_allow_html=True
+    )
 
     # ==================================================
     # HISTORY TABLE
@@ -348,11 +361,16 @@ def render_dashboard(
     # ==================================================
     # CHART TITLE
     # ==================================================
-    st.markdown("""
+    chart_title = """
     <div class="section-title">
         GRAFIK RMS REALTIME
     </div>
-    """, unsafe_allow_html=True)
+    """
+
+    st.markdown(
+        chart_title,
+        unsafe_allow_html=True
+    )
 
     # ==================================================
     # CHART
@@ -465,8 +483,13 @@ def render_dashboard(
     # ==================================================
     # FOOTER
     # ==================================================
-    st.markdown("""
+    footer_html = """
     <div class="footer">
         Sistem Monitoring Distribusi Air Realtime
     </div>
-    """, unsafe_allow_html=True)
+    """
+
+    st.markdown(
+        footer_html,
+        unsafe_allow_html=True
+    )
