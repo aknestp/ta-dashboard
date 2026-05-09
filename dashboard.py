@@ -21,7 +21,7 @@ st.set_page_config(
 # ======================================
 # AUTO REFRESH
 # ======================================
-st_autorefresh(interval=5000, key="refresh")
+st_autorefresh(interval=10000, key="refresh")
 
 # ======================================
 # CUSTOM CSS
