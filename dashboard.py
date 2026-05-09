@@ -20,7 +20,7 @@ st.set_page_config(
 # ==================================================
 # AUTO REFRESH
 # ==================================================
-st_autorefresh(interval=30000, key="refresh")
+st_autorefresh(interval=15000, key="refresh")
 
 # ==================================================
 # GET DATA BACKEND
