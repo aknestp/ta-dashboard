@@ -221,29 +221,53 @@ with col1:
 
     st.markdown(
         f"""
-        <div class='card'>
+        <div style="
+            background:white;
+            padding:30px;
+            border-radius:20px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom:20px;
+        ">
 
-            <div class='{status_class}'>
+            <div style="
+                color:#dc2626;
+                font-size:36px;
+                font-weight:bold;
+            ">
                 {status_text}
             </div>
 
             <br>
 
-            <div class='info-title'>
+            <div style="
+                color:#64748b;
+                font-size:15px;
+            ">
                 Status Sensor
             </div>
 
-            <div class='big-info'>
+            <div style="
+                font-size:24px;
+                font-weight:bold;
+                color:#0f172a;
+            ">
                 {sensor_status}
             </div>
 
             <br>
 
-            <div class='info-title'>
+            <div style="
+                color:#64748b;
+                font-size:15px;
+            ">
                 Waktu Deteksi
             </div>
 
-            <div class='big-info'>
+            <div style="
+                font-size:22px;
+                font-weight:bold;
+                color:#0f172a;
+            ">
                 {latest_data.get("time", "-")}
             </div>
 
@@ -259,23 +283,43 @@ with col2:
 
     st.markdown(
         f"""
-        <div class='card'>
+        <div style="
+            background:white;
+            padding:30px;
+            border-radius:20px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom:20px;
+        ">
 
-            <div class='info-title'>
+            <div style="
+                color:#64748b;
+                font-size:15px;
+            ">
                 Kedatangan Air Terakhir
             </div>
 
-            <div class='big-info'>
+            <div style="
+                font-size:26px;
+                font-weight:bold;
+                color:#0f172a;
+            ">
                 {latest_data.get("last_water_time", "-")}
             </div>
 
             <br><br>
 
-            <div class='info-title'>
+            <div style="
+                color:#64748b;
+                font-size:15px;
+            ">
                 Durasi Distribusi Terakhir
             </div>
 
-            <div class='big-info'>
+            <div style="
+                font-size:26px;
+                font-weight:bold;
+                color:#0f172a;
+            ">
                 {latest_data.get("duration", "-")}
             </div>
 
