@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import requests
+from streamlit_autorefresh import st_autorefresh
 from datetime import datetime
 
 # ======================================
@@ -229,26 +230,29 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-with st.expander("⚠ Kirim Informasi Gangguan"):
+# Popup sederhana menggunakan dialog Streamlit
+@st.dialog("Konfirmasi Operator")
+def operator_popup():
 
     password = st.text_input(
         "Masukkan Password Operator",
         type="password"
     )
 
-    pesan = st.text_area(
-        "Pesan Gangguan",
-        placeholder="Contoh: Distribusi air sedang mengalami gangguan sementara"
+    st.warning(
+        "Pesan yang akan dikirim: Distribusi air mengalami gangguan sementara"
     )
 
-    if st.button("Kirim Informasi"):
+    if st.button("Kirim Informasi Gangguan"):
 
         if password == "admin123":
 
             try:
                 response = requests.post(
                     f"{SERVER_URL}/send_warning",
-                    json={"message": pesan},
+                    json={
+                        "message": "Distribusi air mengalami gangguan sementara"
+                    },
                     timeout=5
                 )
 
@@ -262,6 +266,10 @@ with st.expander("⚠ Kirim Informasi Gangguan"):
 
         else:
             st.error("Password operator salah")
+
+# Tombol utama
+if st.button("⚠ Informasi Gangguan Distribusi"):
+    operator_popup()
 
 # ======================================
 # FOOTER
@@ -278,4 +286,5 @@ st.markdown(
 # ======================================
 # AUTO REFRESH
 # ======================================
-st.autorefresh(interval=5000, key="refresh")
+# Auto refresh setiap 5 detik
+st_autorefresh(interval=5000, key="refresh")
