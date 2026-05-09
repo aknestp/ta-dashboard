@@ -170,114 +170,42 @@ col1, col2 = st.columns(2)
 # ==================================================
 with col1:
 
-    st.markdown(
-        f"""
-        <div style="
-            background:white;
-            padding:30px;
-            border-radius:20px;
-            box-shadow:0 4px 12px rgba(0,0,0,0.08);
-            min-height:280px;
-        ">
+    with st.container(border=True):
 
-            <div style="
-                color:{status_color};
-                font-size:38px;
-                font-weight:bold;
-            ">
-                {status_text}
-            </div>
+        st.subheader(status_text)
 
-            <br>
+        st.metric(
+            label="Status Sensor",
+            value=sensor_status
+        )
 
-            <div style="
-                color:#64748b;
-                font-size:15px;
-            ">
-                Status Sensor
-            </div>
-
-            <div style="
-                color:#0f172a;
-                font-size:24px;
-                font-weight:bold;
-            ">
-                {sensor_status}
-            </div>
-
-            <br>
-
-            <div style="
-                color:#64748b;
-                font-size:15px;
-            ">
-                Waktu Deteksi
-            </div>
-
-            <div style="
-                color:#0f172a;
-                font-size:22px;
-                font-weight:bold;
-            ">
-                {latest_data.get("time", "-")}
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        st.metric(
+            label="Waktu Deteksi",
+            value=latest_data.get("time", "-")
+        )
 
 # ==================================================
 # INFO CARD
 # ==================================================
 with col2:
 
-    st.markdown(
-        f"""
-        <div style="
-            background:white;
-            padding:30px;
-            border-radius:20px;
-            box-shadow:0 4px 12px rgba(0,0,0,0.08);
-            min-height:280px;
-        ">
+    with st.container(border=True):
 
-            <div style="
-                color:#64748b;
-                font-size:15px;
-            ">
-                Kedatangan Air Terakhir
-            </div>
+        st.metric(
+            label="Kedatangan Air Terakhir",
+            value=latest_data.get(
+                "last_water_time",
+                "-"
+            )
+        )
 
-            <div style="
-                color:#0f172a;
-                font-size:28px;
-                font-weight:bold;
-            ">
-                {latest_data.get("last_water_time", "-")}
-            </div>
-
-            <br><br>
-
-            <div style="
-                color:#64748b;
-                font-size:15px;
-            ">
-                Durasi Distribusi Terakhir
-            </div>
-
-            <div style="
-                color:#0f172a;
-                font-size:28px;
-                font-weight:bold;
-            ">
-                {latest_data.get("duration", "-")}
-            </div>
-
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+        st.metric(
+            label="Durasi Distribusi Terakhir",
+            value=latest_data.get(
+                "duration",
+                "-"
+            )
+        )
 
 # ==================================================
 # HISTORY
