@@ -1,7 +1,10 @@
+# ======================================
+# IMPORT
+# ======================================
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
 import pandas as pd
 import requests
-from streamlit_autorefresh import st_autorefresh
 from datetime import datetime
 
 # ======================================
@@ -16,104 +19,115 @@ st.set_page_config(
 )
 
 # ======================================
+# AUTO REFRESH
+# ======================================
+st_autorefresh(interval=5000, key="refresh")
+
+# ======================================
 # CUSTOM CSS
 # ======================================
-st.markdown(
-    """
-    <style>
-    .main {
-        background-color: #f1f5f9;
-    }
+st.markdown("""
+<style>
 
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
+.main {
+    background-color: #f1f5f9;
+}
 
-    .card {
-        background-color: white;
-        padding: 25px;
-        border-radius: 20px;
-        border: 1px solid #e2e8f0;
-        box-shadow: 0 1px 3px rgba(0,0,0,0.08);
-        margin-bottom: 20px;
-    }
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
 
-    .main-title {
-        font-size: 34px;
-        font-weight: bold;
-        color: #1e293b;
-    }
+.card {
+    background-color: white;
+    padding: 25px;
+    border-radius: 20px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
 
-    .subtitle {
-        color: #64748b;
-        font-size: 16px;
-        margin-top: 5px;
-    }
+.main-title {
+    font-size: 34px;
+    font-weight: bold;
+    color: #1e293b;
+}
 
-    .status-title {
-        color: #64748b;
-        font-size: 14px;
-        font-weight: 600;
-        margin-bottom: 15px;
-    }
+.subtitle {
+    color: #64748b;
+    font-size: 16px;
+    margin-top: 5px;
+}
 
-    .status-green {
-        color: #16a34a;
-        font-size: 42px;
-        font-weight: bold;
-    }
+.status-title {
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 15px;
+}
 
-    .status-red {
-        color: #dc2626;
-        font-size: 42px;
-        font-weight: bold;
-    }
+.status-green {
+    color: #16a34a;
+    font-size: 42px;
+    font-weight: bold;
+}
 
-    .info-box {
-        background-color: #f8fafc;
-        padding: 15px;
-        border-radius: 15px;
-        margin-bottom: 15px;
-        border: 1px solid #e2e8f0;
-    }
+.status-red {
+    color: #dc2626;
+    font-size: 42px;
+    font-weight: bold;
+}
 
-    .section-title {
-        font-size: 24px;
-        font-weight: bold;
-        color: #1e293b;
-    }
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #1e293b;
+}
 
-    .footer {
-        text-align: center;
-        color: #94a3b8;
-        padding-top: 30px;
-        font-size: 14px;
-    }
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+.footer {
+    text-align: center;
+    color: #94a3b8;
+    padding-top: 30px;
+    font-size: 14px;
+}
+
+</style>
+""", unsafe_allow_html=True)
 
 # ======================================
-# AMBIL DATA DARI SERVER
+# GET DATA FROM BACKEND
 # ======================================
 try:
-    latest_response = requests.get(f"{SERVER_URL}/latest", timeout=5)
+
+    latest_response = requests.get(
+        f"{SERVER_URL}/latest",
+        timeout=5
+    )
+
     latest_data = latest_response.json()
 
-    chart_response = requests.get(f"{SERVER_URL}/chart", timeout=5)
+    chart_response = requests.get(
+        f"{SERVER_URL}/chart",
+        timeout=5
+    )
+
     chart_data = chart_response.json()
 
-    history_response = requests.get(f"{SERVER_URL}/history", timeout=5)
+    history_response = requests.get(
+        f"{SERVER_URL}/history",
+        timeout=5
+    )
+
     history_data = history_response.json()
 
 except Exception as e:
-    st.error("Gagal terhubung ke server")
+
+    st.error("Backend tidak dapat dihubungkan")
+    st.error(e)
     st.stop()
 
 # ======================================
-# STATUS DISTRIBUSI
+# STATUS AIR
 # ======================================
 status = latest_data.get("status", 0)
 
@@ -125,111 +139,193 @@ else:
     status_class = "status-red"
 
 # ======================================
+# STATUS SENSOR
+# ======================================
+sensor_status = "🔴 Offline"
+
+try:
+
+    latest_time = pd.to_datetime(
+        latest_data.get("time")
+    )
+
+    now = datetime.now()
+
+    selisih = (now - latest_time).total_seconds()
+
+    if selisih < 30:
+        sensor_status = "🟢 Online"
+    else:
+        sensor_status = "🔴 Offline"
+
+except:
+    sensor_status = "🔴 Offline"
+
+# ======================================
 # HEADER
 # ======================================
-st.markdown(
-    """
-    <div class='card'>
-        <div class='main-title'>
-            Sistem Peringatan Dini Kedatangan Air
-        </div>
-        <div class='subtitle'>
-            Informasi kedatangan air distribusi berbasis IoT dan Machine Learning
-        </div>
+st.markdown(f"""
+<div class='card'>
+
+    <div class='main-title'>
+        Sistem Peringatan Dini Kedatangan Air
     </div>
-    """,
-    unsafe_allow_html=True
-)
+
+    <div class='subtitle'>
+        Informasi kedatangan air distribusi berbasis IoT dan Machine Learning
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
 
 # ======================================
 # STATUS SECTION
 # ======================================
 col1, col2 = st.columns(2)
 
+# ======================================
+# STATUS DISTRIBUSI
+# ======================================
 with col1:
-    st.markdown(
-        f"""
-        <div class='card'>
-            <div class='status-title'>STATUS DISTRIBUSI</div>
-            <div class='{status_class}'>{status_text}</div>
-            <br>
-            <p><b>Hari:</b> {datetime.now().strftime('%A')}</p>
-            <p><b>Waktu Deteksi:</b> {latest_data.get('time', '-')} WIB</p>
-            <p><b>Status Sensor:</b> Online</p>
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
 
+    st.markdown(f"""
+    <div class='card'>
+
+        <div class='status-title'>
+            STATUS DISTRIBUSI
+        </div>
+
+        <div class='{status_class}'>
+            {status_text}
+        </div>
+
+        <br>
+
+        <p>
+            <b>Hari:</b>
+            {datetime.now().strftime('%A')}
+        </p>
+
+        <p>
+            <b>Waktu Deteksi:</b>
+            {latest_data.get('time', '-')}
+        </p>
+
+        <p>
+            <b>Status Sensor:</b>
+            {sensor_status}
+        </p>
+
+    </div>
+    """, unsafe_allow_html=True)
+
+# ======================================
+# INFORMASI TERAKHIR
+# ======================================
 with col2:
-    st.markdown(
-        f"""
-        <div class='card'>
-            <div class='status-title'>INFORMASI TERAKHIR</div>
 
-            <div style='background-color:#f8fafc;padding:15px;border-radius:15px;margin-bottom:15px;border:1px solid #e2e8f0;'>
-                <b>Kedatangan Air Terakhir</b><br>
-                {latest_data.get('last_water_time', '-')}
-            </div>
+    st.markdown(f"""
+    <div class='card'>
 
-            <div style='background-color:#f8fafc;padding:15px;border-radius:15px;margin-bottom:15px;border:1px solid #e2e8f0;'>
-                <b>Durasi Distribusi Terakhir</b><br>
-                {latest_data.get('duration', '-')}
-            </div>
+        <div class='status-title'>
+            INFORMASI TERAKHIR
         </div>
-        """,
-        unsafe_allow_html=True
-    )
+
+        <div style='background-color:#f8fafc;
+                    padding:15px;
+                    border-radius:15px;
+                    margin-bottom:15px;
+                    border:1px solid #e2e8f0;'>
+
+            <b>Kedatangan Air Terakhir</b>
+            <br>
+
+            {latest_data.get('last_water_time', '-')}
+
+        </div>
+
+        <div style='background-color:#f8fafc;
+                    padding:15px;
+                    border-radius:15px;
+                    border:1px solid #e2e8f0;'>
+
+            <b>Durasi Distribusi Terakhir</b>
+            <br>
+
+            {latest_data.get('duration', '-')}
+
+        </div>
+
+    </div>
+    """, unsafe_allow_html=True)
 
 # ======================================
 # HISTORY TABLE
 # ======================================
-st.markdown(
-    """
-    <div class='card'>
-        <div class='section-title'>Riwayat Distribusi Air</div>
-        <div class='subtitle'>Riwayat kedatangan air distribusi</div>
+st.markdown("""
+<div class='card'>
+
+    <div class='section-title'>
+        Riwayat Distribusi Air
     </div>
-    """,
-    unsafe_allow_html=True
-)
+
+    <div class='subtitle'>
+        Riwayat kedatangan air distribusi
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
+
+if isinstance(history_data, dict):
+    history_data = [history_data]
 
 history_df = pd.DataFrame(history_data)
-st.dataframe(history_df, use_container_width=True)
+
+st.dataframe(
+    history_df,
+    use_container_width=True
+)
 
 # ======================================
 # REALTIME CHART
 # ======================================
-st.markdown(
-    """
-    <div class='card'>
-        <div class='section-title'>Grafik Distribusi Air</div>
-        <div class='subtitle'>Visualisasi perubahan RMS secara realtime</div>
+st.markdown("""
+<div class='card'>
+
+    <div class='section-title'>
+        Grafik Distribusi Air
     </div>
-    """,
-    unsafe_allow_html=True
-)
+
+    <div class='subtitle'>
+        Visualisasi perubahan RMS secara realtime
+    </div>
+
+</div>
+""", unsafe_allow_html=True)
 
 chart_df = pd.DataFrame(chart_data)
 
-if 'rms' in chart_df.columns:
-    st.line_chart(chart_df['rms'])
+if "rms" in chart_df.columns:
+
+    st.line_chart(
+        chart_df["rms"]
+    )
+
 else:
     st.warning("Data RMS belum tersedia")
 
 # ======================================
-# TOMBOL OPERATOR
+# BUTTON OPERATOR
 # ======================================
-
-# Simpan state popup
 if "show_popup" not in st.session_state:
     st.session_state.show_popup = False
 
-# Klik tombol buka popup
 if st.button("⚠ Informasi Gangguan Distribusi"):
     st.session_state.show_popup = True
 
-# Popup operator
+# ======================================
+# POPUP
+# ======================================
 if st.session_state.show_popup:
 
     @st.dialog("Konfirmasi Operator")
@@ -247,34 +343,63 @@ if st.session_state.show_popup:
 
         col1, col2 = st.columns(2)
 
+        # ======================================
+        # BUTTON KIRIM
+        # ======================================
         with col1:
-            if st.button("Kirim", use_container_width=True):
+
+            if st.button(
+                "Kirim",
+                use_container_width=True
+            ):
 
                 if password == "admin123":
 
                     try:
+
                         response = requests.post(
                             f"{SERVER_URL}/send_warning",
                             json={
-                                "message": "Distribusi air mengalami gangguan sementara"
+                                "message":
+                                "Distribusi air mengalami gangguan sementara"
                             },
                             timeout=5
                         )
 
                         if response.status_code == 200:
-                            st.success("Informasi gangguan berhasil dikirim")
+
+                            st.success(
+                                "Informasi gangguan berhasil dikirim"
+                            )
+
                             st.session_state.show_popup = False
+
                         else:
-                            st.error("Gagal mengirim informasi")
+
+                            st.error(
+                                "Gagal mengirim informasi"
+                            )
 
                     except Exception as e:
-                        st.error(f"Error: {e}")
+
+                        st.error(e)
 
                 else:
-                    st.error("Password operator salah")
 
+                    st.error(
+                        "Password operator salah"
+                    )
+
+        # ======================================
+        # BUTTON BATAL
+        # ======================================
         with col2:
-            if st.button("Batal", use_container_width=True):
+
+            if st.button(
+                "Batal",
+                use_container_width=True
+            ):
+
                 st.session_state.show_popup = False
 
     operator_popup()
@@ -282,17 +407,11 @@ if st.session_state.show_popup:
 # ======================================
 # FOOTER
 # ======================================
-st.markdown(
-    """
-    <div class='footer'>
-        Sistem Peringatan Dini Kedatangan Air Distribusi Berbasis IoT Menggunakan Machine Learning
-    </div>
-    """,
-    unsafe_allow_html=True
-)
+st.markdown("""
+<div class='footer'>
 
-# ======================================
-# AUTO REFRESH
-# ======================================
-# Auto refresh setiap 5 detik
-st_autorefresh(interval=5000, key="refresh")
+Sistem Peringatan Dini Kedatangan Air Distribusi
+Berbasis IoT Menggunakan Machine Learning
+
+</div>
+""", unsafe_allow_html=True)
