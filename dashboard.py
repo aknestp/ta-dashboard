@@ -7,7 +7,7 @@ from datetime import datetime
 # ==================================================
 # CONFIG
 # ==================================================
-SERVER_URL = "https://YOUR-BACKEND.up.railway.app"
+SERVER_URL = "https://ta-backend-production-f459.up.railway.app/"
 
 st.set_page_config(
     page_title="Sistem Peringatan Dini Air",
