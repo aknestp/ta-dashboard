@@ -6,7 +6,7 @@ from datetime import datetime
 # ======================================
 # CONFIG
 # ======================================
-SERVER_URL = "http://127.0.0.1:5000"
+SERVER_URL = "https://ta-backend-production-f459.up.railway.app"
 
 st.set_page_config(
     page_title="Sistem Peringatan Dini Air",
