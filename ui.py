@@ -3,158 +3,162 @@ import pandas as pd
 import requests
 
 # ==================================================
-# CSS (DIPERBARUI DENGAN MEDIA QUERY UNTUK HP)
+# CSS MODERN & RESPONSIVE
 # ==================================================
 def load_css():
 
     st.markdown("""
     <style>
 
-    .stApp{
-        background-color:#dfe8d5;
+    /* Background Aplikasi Keseluruhan */
+    .stApp {
+        background-color: #F4F7F6;
     }
 
-    .block-container{
-        padding-top:1rem;
-        padding-bottom:1rem;
-        max-width:1400px;
+    .block-container {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+        max-width: 1200px;
     }
 
-    /* HEADER */
-    .top-header{
-        background:#1b6b3a;
-        padding:20px;
-        border-radius:6px;
-        margin-bottom:18px;
-        border:2px solid #245c35;
+    /* HEADER MODERN DENGAN GRADIENT */
+    .top-header {
+        background: linear-gradient(135deg, #0A6847 0%, #7ABA78 100%);
+        padding: 30px 20px;
+        border-radius: 12px;
+        margin-bottom: 25px;
+        box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        text-align: center;
     }
 
-    .top-title{
-        color:white;
-        font-size:42px; /* Ukuran default untuk PC */
-        font-weight:900;
-        letter-spacing:1px;
+    .top-title {
+        color: #ffffff;
+        font-size: 38px;
+        font-weight: 900;
+        letter-spacing: 1px;
+        text-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+        margin-bottom: 5px;
     }
 
-    .top-subtitle{
-        color:#d7f0dc;
-        font-size:16px; /* Ukuran default untuk PC */
-        margin-top:5px;
+    .top-subtitle {
+        color: #E8F3EE;
+        font-size: 16px;
+        font-weight: 500;
     }
 
-    /* SECTION */
-    .section-title{
-        background:#1b6b3a;
-        color:white;
-        padding:10px 15px;
-        font-size:24px; /* Ukuran default untuk PC */
-        font-weight:bold;
-        border-radius:4px;
-        margin-top:20px;
-        margin-bottom:10px;
+    /* SECTION TITLE MODERN */
+    .section-title {
+        background: transparent;
+        color: #0A6847;
+        padding: 10px 0px;
+        font-size: 22px;
+        font-weight: 800;
+        border-bottom: 3px solid #7ABA78;
+        margin-top: 25px;
+        margin-bottom: 15px;
+        display: inline-block;
     }
 
-    /* CARD */
-    [data-testid="stVerticalBlockBorderWrapper"]{
-        background:#edf4e8;
-        border:2px solid #9eb397;
-        border-radius:4px;
-        padding:10px;
-        box-shadow:none;
+    /* CARD MODERN (CONTAINER) */
+    [data-testid="stVerticalBlockBorderWrapper"] {
+        background: #ffffff;
+        border: none !important;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
         display: flex;
         flex-direction: column;
         height: 100%;
         justify-content: space-between;
     }
 
-    /* METRIC */
-    [data-testid="stMetric"]{
-        background:#f6faf2;
-        border:1px solid #b7c7b0;
-        padding:10px;
-        border-radius:2px;
-        margin-bottom: 10px;
+    /* METRIC MODERN (KOTAK DATA) */
+    [data-testid="stMetric"] {
+        background: #F9FCFB;
+        border: none;
+        border-left: 5px solid #0A6847;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.02);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    
+    [data-testid="stMetric"]:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 12px rgba(0,0,0,0.06);
     }
 
     /* METRIC LABEL */
-    [data-testid="stMetricLabel"]{
-        color:#245c35;
-        font-weight:bold;
+    [data-testid="stMetricLabel"] {
+        color: #4A5551;
+        font-weight: 600;
     }
 
     /* METRIC VALUE */
-    [data-testid="stMetricValue"]{
-        color:#1b3d22;
-        font-weight:900;
+    [data-testid="stMetricValue"] {
+        color: #0A6847;
+        font-weight: 900;
     }
 
     /* DATAFRAME */
-    div[data-testid="stDataFrame"]{
-        border:2px solid #9eb397;
-        border-radius:4px;
-        overflow:hidden;
+    div[data-testid="stDataFrame"] {
+        border: 1px solid #E0EBE5;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.03);
     }
 
     /* CHART */
-    div[data-testid="stVegaLiteChart"]{
-        background:#edf4e8;
-        border:2px solid #9eb397;
-        border-radius:4px;
-        padding:10px;
+    div[data-testid="stVegaLiteChart"] {
+        background: #ffffff;
+        border: 1px solid #E0EBE5;
+        border-radius: 12px;
+        padding: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.04);
     }
 
-    /* BUTTON */
-    .stButton > button{
-        background:#c0392b;
-        color:white;
-        border:none;
-        border-radius:4px;
-        font-weight:bold;
-        padding:12px;
+    /* BUTTON WARNING MODERN */
+    .stButton > button {
+        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: bold;
+        padding: 12px;
+        box-shadow: 0 4px 10px rgba(192, 57, 43, 0.3);
+        transition: all 0.3s ease;
     }
 
-    .stButton > button:hover{
-        background:#a93226;
-        color:white;
+    .stButton > button:hover {
+        background: linear-gradient(135deg, #c0392b 0%, #922b21 100%);
+        color: white;
+        box-shadow: 0 6px 14px rgba(192, 57, 43, 0.4);
+        transform: scale(1.01);
     }
 
     /* FOOTER */
-    .footer{
-        text-align:center;
-        color:#245c35;
-        margin-top:30px;
-        font-size:14px;
-        font-weight:bold;
+    .footer {
+        text-align: center;
+        color: #7f8c8d;
+        margin-top: 40px;
+        font-size: 14px;
+        font-weight: 500;
+        border-top: 1px solid #E0EBE5;
+        padding-top: 20px;
     }
 
     /* ==================================================
        RESPONSIVE PADA LAYAR HANDPHONE / KECIL
        ================================================== */
     @media (max-width: 768px) {
-        .top-header {
-            padding: 15px;
-        }
-        .top-title {
-            font-size: 26px !important; /* Dikecilkan untuk HP */
-        }
-        .top-subtitle {
-            font-size: 13px !important; /* Dikecilkan untuk HP */
-        }
-        .section-title {
-            font-size: 18px !important; /* Dikecilkan untuk HP */
-            padding: 8px 12px;
-        }
-        /* Mengecilkan angka metric bawaan Streamlit di HP */
-        [data-testid="stMetricValue"] > div {
-            font-size: 1.5rem !important; 
-        }
-        /* Mengecilkan label text metric di HP */
-        [data-testid="stMetricLabel"] p {
-            font-size: 13px !important;
-        }
-        .footer {
-            font-size: 12px !important;
-        }
+        .top-header { padding: 20px 15px; }
+        .top-title { font-size: 24px !important; }
+        .top-subtitle { font-size: 13px !important; }
+        .section-title { font-size: 18px !important; }
+        [data-testid="stMetricValue"] > div { font-size: 1.4rem !important; }
+        [data-testid="stMetricLabel"] p { font-size: 13px !important; }
+        .footer { font-size: 12px !important; }
     }
 
     </style>
@@ -179,15 +183,8 @@ def render_dashboard(
     # ==================================================
     st.markdown("""
     <div class="top-header">
-
-    <div class="top-title">
-    SISTEM PERINGATAN DINI KEDATANGAN AIR
-    </div>
-
-    <div class="top-subtitle">
-    Monitoring distribusi air berbasis IoT dan Machine Learning
-    </div>
-
+        <div class="top-title">💧 SISTEM PERINGATAN DINI KEDATANGAN AIR</div>
+        <div class="top-subtitle">Monitoring Distribusi Air Berbasis IoT dan Machine Learning</div>
     </div>
     """, unsafe_allow_html=True)
 
@@ -199,31 +196,33 @@ def render_dashboard(
     # Kolom Kiri: Status Utama
     with col1:
         with st.container(border=True):
-            st.markdown(f"### {status_text}")
+            # Penambahan ikon otomatis berdasarkan status
+            icon_status = "🔴" if "TIDAK" in status_text.upper() else "🟢"
+            st.markdown(f"### {icon_status} {status_text}")
             
             sub_col1, sub_col2 = st.columns(2)
             with sub_col1:
-                st.metric("Status Sensor", sensor_status)
+                st.metric("📡 Status Sensor", sensor_status)
             with sub_col2:
-                st.metric("Waktu Deteksi", latest_data.get("time", "-"))
+                st.metric("⏱️ Waktu Deteksi", latest_data.get("time", "-"))
 
     # Kolom Kanan: Informasi Riwayat Terakhir
     with col2:
         with st.container(border=True):
-            st.markdown("### Ringkasan Distribusi")
+            st.markdown("### 📊 Ringkasan Distribusi")
             
             sub_col3, sub_col4 = st.columns(2)
             with sub_col3:
-                st.metric("Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
+                st.metric("🌊 Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
             with sub_col4:
-                st.metric("Durasi Terakhir", latest_data.get("duration", "-"))
+                st.metric("⏳ Durasi Terakhir", latest_data.get("duration", "-"))
 
     # ==================================================
     # HISTORY TITLE
     # ==================================================
     st.markdown("""
     <div class="section-title">
-    RIWAYAT DISTRIBUSI AIR
+    📋 Riwayat Distribusi Air
     </div>
     """, unsafe_allow_html=True)
 
@@ -239,16 +238,14 @@ def render_dashboard(
             height=300
         )
     else:
-        st.info(
-            "Belum ada riwayat distribusi"
-        )
+        st.info("Belum ada riwayat distribusi")
 
     # ==================================================
     # CHART TITLE
     # ==================================================
     st.markdown("""
     <div class="section-title">
-    GRAFIK RMS REALTIME
+    📈 Grafik RMS Realtime
     </div>
     """, unsafe_allow_html=True)
 
@@ -263,17 +260,16 @@ def render_dashboard(
             height=350
         )
     else:
-        st.warning(
-            "Data RMS belum tersedia"
-        )
+        st.warning("Data RMS belum tersedia")
 
     # ==================================================
     # WARNING BUTTON
     # ==================================================
+    st.markdown("<br>", unsafe_allow_html=True) # Spasi ekstra sebelum tombol
     if "show_popup" not in st.session_state:
         st.session_state.show_popup = False
 
-    if st.button("⚠ INFORMASI GANGGUAN DISTRIBUSI"):
+    if st.button("🚨 LAPORKAN GANGGUAN DISTRIBUSI", use_container_width=True):
         st.session_state.show_popup = True
 
     # ==================================================
@@ -316,6 +312,7 @@ def render_dashboard(
     # ==================================================
     st.markdown("""
     <div class="footer">
-    Sistem Peringatan Dini Kedatangan Air Distribusi Berbasis IoT dan Machine Learning
+    © 2026 Sistem Peringatan Dini Kedatangan Air Distribusi <br>
+    Berbasis IoT dan Machine Learning
     </div>
     """, unsafe_allow_html=True)
