@@ -4,49 +4,58 @@ import streamlit as st
 import pandas as pd
 import requests
 
+
 # ==================================================
-# CSS
+# LOAD CSS
 # ==================================================
 def load_css():
 
     st.markdown("""
     <style>
 
-    /* BACKGROUND */
+    /* =========================
+       BACKGROUND
+    ========================= */
     .stApp{
         background-color:#dfe8d5;
     }
 
-    /* MAIN */
+    /* =========================
+       MAIN LAYOUT
+    ========================= */
     .block-container{
+        max-width:1400px;
         padding-top:1rem;
         padding-bottom:1rem;
-        max-width:1400px;
     }
 
-    /* HEADER */
+    /* =========================
+       HEADER
+    ========================= */
     .top-header{
         background:#1b6b3a;
+        border:2px solid #245c35;
         padding:20px;
         border-radius:4px;
-        border:2px solid #245c35;
         margin-bottom:20px;
     }
 
     .top-title{
         color:white;
-        font-size:42px;
+        font-size:40px;
         font-weight:900;
         letter-spacing:1px;
     }
 
     .top-subtitle{
         color:#d7f0dc;
-        font-size:15px;
         margin-top:5px;
+        font-size:15px;
     }
 
-    /* SECTION */
+    /* =========================
+       SECTION TITLE
+    ========================= */
     .section-title{
         background:#1b6b3a;
         color:white;
@@ -58,16 +67,25 @@ def load_css():
         margin-bottom:10px;
     }
 
-    /* PANEL */
+    /* =========================
+       PANEL
+    ========================= */
     .panel{
         background:#edf4e8;
         border:2px solid #9eb397;
         padding:15px;
         border-radius:4px;
-        min-height:420px;
+
+        height:420px;
+
+        display:flex;
+        flex-direction:column;
+        justify-content:flex-start;
     }
 
-    /* PANEL HEADER */
+    /* =========================
+       PANEL HEADER
+    ========================= */
     .panel-header{
         background:#1b6b3a;
         color:white;
@@ -78,15 +96,19 @@ def load_css():
         border-radius:2px;
     }
 
-    /* STATUS */
+    /* =========================
+       STATUS
+    ========================= */
     .status-box{
         font-size:40px;
         font-weight:900;
-        color:#1b3d22;
+        color:#17351e;
         margin-bottom:15px;
     }
 
-    /* MINI BOX */
+    /* =========================
+       MINI BOX
+    ========================= */
     .mini-box{
         background:#f8fbf5;
         border:1px solid #b8c7b0;
@@ -95,7 +117,9 @@ def load_css():
         border-radius:2px;
     }
 
-    /* MINI TITLE */
+    /* =========================
+       MINI TITLE
+    ========================= */
     .mini-title{
         color:#245c35;
         font-size:14px;
@@ -103,21 +127,27 @@ def load_css():
         margin-bottom:8px;
     }
 
-    /* MINI VALUE */
+    /* =========================
+       MINI VALUE
+    ========================= */
     .mini-value{
         color:#17351e;
         font-size:30px;
         font-weight:900;
     }
 
-    /* DATAFRAME */
+    /* =========================
+       TABLE
+    ========================= */
     div[data-testid="stDataFrame"]{
         border:2px solid #9eb397;
         border-radius:4px;
         overflow:hidden;
     }
 
-    /* CHART */
+    /* =========================
+       CHART
+    ========================= */
     div[data-testid="stVegaLiteChart"]{
         background:#edf4e8;
         border:2px solid #9eb397;
@@ -125,7 +155,9 @@ def load_css():
         padding:10px;
     }
 
-    /* BUTTON */
+    /* =========================
+       BUTTON
+    ========================= */
     .stButton > button{
         background:#c0392b;
         color:white;
@@ -142,7 +174,9 @@ def load_css():
         color:white;
     }
 
-    /* FOOTER */
+    /* =========================
+       FOOTER
+    ========================= */
     .footer{
         text-align:center;
         color:#245c35;
@@ -153,6 +187,7 @@ def load_css():
 
     </style>
     """, unsafe_allow_html=True)
+
 
 # ==================================================
 # MAIN UI
@@ -174,13 +209,13 @@ def render_dashboard(
     st.markdown("""
     <div class="top-header">
 
-    <div class="top-title">
-    DASHBOARD DISTRIBUSI AIR
-    </div>
+        <div class="top-title">
+            DASHBOARD DISTRIBUSI AIR
+        </div>
 
-    <div class="top-subtitle">
-    Sistem Peringatan Dini Kedatangan Air Berbasis IoT dan Machine Learning
-    </div>
+        <div class="top-subtitle">
+            Sistem Peringatan Dini Kedatangan Air Berbasis IoT dan Machine Learning
+        </div>
 
     </div>
     """, unsafe_allow_html=True)
@@ -195,7 +230,7 @@ def render_dashboard(
     # ==================================================
     with col1:
 
-        st.markdown(f"""
+        html_status = f"""
         <div class="panel">
 
             <div class="panel-header">
@@ -231,14 +266,19 @@ def render_dashboard(
             </div>
 
         </div>
-        """, unsafe_allow_html=True)
+        """
+
+        st.markdown(
+            html_status,
+            unsafe_allow_html=True
+        )
 
     # ==================================================
     # INFO PANEL
     # ==================================================
     with col2:
 
-        st.markdown(f"""
+        html_info = f"""
         <div class="panel">
 
             <div class="panel-header">
@@ -270,22 +310,27 @@ def render_dashboard(
             </div>
 
         </div>
-        """, unsafe_allow_html=True)
+        """
+
+        st.markdown(
+            html_info,
+            unsafe_allow_html=True
+        )
 
     # ==================================================
     # HISTORY TITLE
     # ==================================================
     st.markdown("""
     <div class="section-title">
-    RIWAYAT DISTRIBUSI AIR
+        RIWAYAT DISTRIBUSI AIR
     </div>
     """, unsafe_allow_html=True)
 
+    # ==================================================
+    # HISTORY TABLE
+    # ==================================================
     history_df = pd.DataFrame(history_data)
 
-    # ==================================================
-    # SHOW HISTORY
-    # ==================================================
     if not history_df.empty:
 
         st.dataframe(
@@ -305,15 +350,15 @@ def render_dashboard(
     # ==================================================
     st.markdown("""
     <div class="section-title">
-    GRAFIK RMS REALTIME
+        GRAFIK RMS REALTIME
     </div>
     """, unsafe_allow_html=True)
 
+    # ==================================================
+    # CHART
+    # ==================================================
     chart_df = pd.DataFrame(chart_data)
 
-    # ==================================================
-    # SHOW CHART
-    # ==================================================
     if (
         not chart_df.empty
         and "rms" in chart_df.columns
@@ -344,7 +389,7 @@ def render_dashboard(
         st.session_state.show_popup = True
 
     # ==================================================
-    # POPUP
+    # POPUP OPERATOR
     # ==================================================
     if st.session_state.show_popup:
 
@@ -422,6 +467,6 @@ def render_dashboard(
     # ==================================================
     st.markdown("""
     <div class="footer">
-    Sistem Monitoring Distribusi Air Realtime
+        Sistem Monitoring Distribusi Air Realtime
     </div>
     """, unsafe_allow_html=True)
