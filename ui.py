@@ -61,6 +61,11 @@ def load_css():
         border-radius:4px;
         padding:10px;
         box-shadow:none;
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: space-between;
+}
     }
 
     /* METRIC */
@@ -69,6 +74,7 @@ def load_css():
         border:1px solid #b7c7b0;
         padding:10px;
         border-radius:2px;
+        margin-bottom: 10px;
     }
 
     /* METRIC LABEL */
@@ -161,61 +167,29 @@ def render_dashboard(
     # ==================================================
     col1, col2 = st.columns(2)
 
-    # ==================================================
-    # STATUS CARD
-    # ==================================================
+    # Kolom Kiri: Status Utama
     with col1:
-
         with st.container(border=True):
+            # Header Status dengan Icon (Opsional: tambahkan emoji agar lebih hidup)
+            st.markdown(f"### {status_text}")
+            
+            # Menggunakan sub-columns di dalam container agar metric berjejer rapi
+            sub_col1, sub_col2 = st.columns(2)
+            with sub_col1:
+                st.metric("Status Sensor", sensor_status)
+            with sub_col2:
+                st.metric("Waktu Deteksi", latest_data.get("time", "-"))
 
-            st.subheader(status_text)
-
-            st.metric(
-                "Status Sensor",
-                sensor_status
-            )
-
-            st.metric(
-                "Waktu Deteksi",
-                latest_data.get(
-                    "time",
-                    "-"
-                )
-            )
-
-    # ==================================================
-    # INFO CARD
-    # ==================================================
+    # Kolom Kanan: Informasi Riwayat Terakhir
     with col2:
-
         with st.container(border=True):
-
-            st.metric(
-                "Kedatangan Air Terakhir",
-                latest_data.get(
-                    "last_water_time",
-                    "-"
-                )
-            )
-
-            st.metric(
-                "Durasi Distribusi Terakhir",
-                latest_data.get(
-                    "duration",
-                    "-"
-                )
-            )
-
-    # ==================================================
-    # HISTORY TITLE
-    # ==================================================
-    st.markdown("""
-    <div class="section-title">
-    RIWAYAT DISTRIBUSI AIR
-    </div>
-    """, unsafe_allow_html=True)
-
-    history_df = pd.DataFrame(history_data)
+            st.markdown("### Ringkasan Distribusi")
+            
+            sub_col3, sub_col4 = st.columns(2)
+            with sub_col3:
+                st.metric("Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
+            with sub_col4:
+                st.metric("Durasi Terakhir", latest_data.get("duration", "-"))
 
     # ==================================================
     # SHOW HISTORY
