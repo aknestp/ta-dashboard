@@ -167,12 +167,12 @@ with col2:
         <div class='card'>
             <div class='status-title'>INFORMASI TERAKHIR</div>
 
-            <div class='info-box'>
+            <div style='background-color:#f8fafc;padding:15px;border-radius:15px;margin-bottom:15px;border:1px solid #e2e8f0;'>
                 <b>Kedatangan Air Terakhir</b><br>
                 {latest_data.get('last_water_time', '-')}
             </div>
 
-            <div class='info-box'>
+            <div style='background-color:#f8fafc;padding:15px;border-radius:15px;margin-bottom:15px;border:1px solid #e2e8f0;'>
                 <b>Durasi Distribusi Terakhir</b><br>
                 {latest_data.get('duration', '-')}
             </div>
