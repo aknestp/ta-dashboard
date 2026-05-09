@@ -18,7 +18,7 @@ st.set_page_config(
 # ==================================================
 # AUTO REFRESH
 # ==================================================
-st_autorefresh(interval=5000, key="refresh")
+st_autorefresh(interval=30000, key="refresh")
 
 # ==================================================
 # CSS
@@ -27,55 +27,101 @@ st.markdown("""
 <style>
 
 .stApp{
-    background-color:#f1f5f9;
+    background-color:#eef2f7;
 }
 
+/* Main Layout */
 .block-container{
-    padding-top:2rem;
+    padding-top:1.5rem;
     padding-bottom:2rem;
+    max-width:1200px;
 }
 
-.main-title{
-    font-size:44px;
+/* Header */
+.top-header{
+    background:linear-gradient(
+        135deg,
+        #0f172a,
+        #1e293b
+    );
+    padding:35px;
+    border-radius:25px;
+    margin-bottom:25px;
+    color:white;
+    box-shadow:0 8px 25px rgba(0,0,0,0.12);
+}
+
+.top-title{
+    font-size:42px;
+    font-weight:800;
+    margin-bottom:8px;
+}
+
+.top-subtitle{
+    font-size:17px;
+    color:#cbd5e1;
+}
+
+/* Section Title */
+.section-title{
+    font-size:34px;
     font-weight:800;
     color:#0f172a;
-    margin-bottom:5px;
+    margin-top:15px;
+    margin-bottom:18px;
 }
 
-.subtitle{
-    color:#64748b;
-    font-size:17px;
-    margin-bottom:35px;
+/* Card */
+[data-testid="stVerticalBlockBorderWrapper"]{
+    background:white;
+    border-radius:22px;
+    padding:10px;
+    border:none;
+    box-shadow:0 4px 18px rgba(0,0,0,0.06);
 }
 
-.section-title{
-    font-size:28px;
-    font-weight:bold;
-    color:#0f172a;
-    margin-top:20px;
-    margin-bottom:15px;
+/* Metric */
+[data-testid="stMetric"]{
+    background:#f8fafc;
+    padding:15px;
+    border-radius:18px;
 }
 
+/* Dataframe */
 div[data-testid="stDataFrame"]{
-    border-radius:15px;
+    border-radius:20px;
     overflow:hidden;
 }
 
+/* Chart */
+div[data-testid="stVegaLiteChart"]{
+    background:white;
+    border-radius:20px;
+    padding:10px;
+}
+
+/* Button */
 .stButton > button{
-    background-color:#dc2626;
+    background:linear-gradient(
+        135deg,
+        #dc2626,
+        #ef4444
+    );
     color:white;
     border:none;
-    border-radius:12px;
-    padding:12px 20px;
+    border-radius:15px;
+    padding:14px 24px;
     font-weight:bold;
+    font-size:16px;
     width:100%;
+    box-shadow:0 4px 12px rgba(239,68,68,0.3);
 }
 
 .stButton > button:hover{
-    background-color:#b91c1c;
     color:white;
 }
 
+/* Footer */
 .footer{
     text-align:center;
     color:#94a3b8;
@@ -119,10 +165,8 @@ status = latest_data.get("status", 0)
 
 if status == 1:
     status_text = "🟢 AIR MENGALIR"
-    status_color = "#16a34a"
 else:
     status_text = "🔴 AIR TIDAK MENGALIR"
-    status_color = "#dc2626"
 
 # ==================================================
 # SENSOR STATUS
@@ -151,17 +195,21 @@ except:
 # HEADER
 # ==================================================
 st.markdown("""
-<div class="main-title">
-Sistem Peringatan Dini Kedatangan Air
+<div class="top-header">
+
+<div class="top-title">
+💧 Sistem Peringatan Dini Kedatangan Air
 </div>
 
-<div class="subtitle">
+<div class="top-subtitle">
 Monitoring distribusi air berbasis IoT dan Machine Learning
+</div>
+
 </div>
 """, unsafe_allow_html=True)
 
 # ==================================================
-# TOP CARDS
+# TOP SECTION
 # ==================================================
 col1, col2 = st.columns(2)
 
@@ -175,13 +223,16 @@ with col1:
         st.subheader(status_text)
 
         st.metric(
-            label="Status Sensor",
-            value=sensor_status
+            "Status Sensor",
+            sensor_status
         )
 
         st.metric(
-            label="Waktu Deteksi",
-            value=latest_data.get("time", "-")
+            "Waktu Deteksi",
+            latest_data.get(
+                "time",
+                "-"
+            )
         )
 
 # ==================================================
@@ -192,23 +243,23 @@ with col2:
     with st.container(border=True):
 
         st.metric(
-            label="Kedatangan Air Terakhir",
-            value=latest_data.get(
+            "Kedatangan Air Terakhir",
+            latest_data.get(
                 "last_water_time",
                 "-"
             )
         )
 
         st.metric(
-            label="Durasi Distribusi Terakhir",
-            value=latest_data.get(
+            "Durasi Distribusi Terakhir",
+            latest_data.get(
                 "duration",
                 "-"
             )
         )
 
 # ==================================================
-# HISTORY
+# HISTORY TITLE
 # ==================================================
 st.markdown("""
 <div class="section-title">
@@ -216,6 +267,9 @@ Riwayat Distribusi Air
 </div>
 """, unsafe_allow_html=True)
 
+# ==================================================
+# HISTORY DATA
+# ==================================================
 if isinstance(history_data, dict):
     history_data = [history_data]
 
@@ -224,6 +278,9 @@ elif not isinstance(history_data, list):
 
 history_df = pd.DataFrame(history_data)
 
+# ==================================================
+# SHOW HISTORY
+# ==================================================
 if not history_df.empty:
 
     st.dataframe(
@@ -234,10 +291,12 @@ if not history_df.empty:
 
 else:
 
-    st.info("Belum ada riwayat distribusi")
+    st.info(
+        "Belum ada riwayat distribusi"
+    )
 
 # ==================================================
-# CHART
+# CHART TITLE
 # ==================================================
 st.markdown("""
 <div class="section-title">
@@ -245,6 +304,9 @@ Grafik RMS Realtime
 </div>
 """, unsafe_allow_html=True)
 
+# ==================================================
+# CHART DATA
+# ==================================================
 if isinstance(chart_data, dict):
     chart_data = [chart_data]
 
@@ -253,6 +315,9 @@ elif not isinstance(chart_data, list):
 
 chart_df = pd.DataFrame(chart_data)
 
+# ==================================================
+# SHOW CHART
+# ==================================================
 if (
     not chart_df.empty
     and "rms" in chart_df.columns
@@ -270,7 +335,7 @@ else:
     )
 
 # ==================================================
-# OPERATOR BUTTON
+# BUTTON WARNING
 # ==================================================
 if "show_popup" not in st.session_state:
     st.session_state.show_popup = False
