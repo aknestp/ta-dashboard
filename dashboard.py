@@ -219,64 +219,70 @@ col1, col2 = st.columns(2)
 # ======================================
 with col1:
 
-    st.markdown(f"""
-    <div class='card'>
+    st.markdown(
+        f"""
+        <div class='card'>
 
-        <div class='{status_class}'>
-            {status_text}
+            <div class='{status_class}'>
+                {status_text}
+            </div>
+
+            <br>
+
+            <div class='info-title'>
+                Status Sensor
+            </div>
+
+            <div class='big-info'>
+                {sensor_status}
+            </div>
+
+            <br>
+
+            <div class='info-title'>
+                Waktu Deteksi
+            </div>
+
+            <div class='big-info'>
+                {latest_data.get("time", "-")}
+            </div>
+
         </div>
-
-        <br>
-
-        <div class='info-title'>
-            Status Sensor
-        </div>
-
-        <div class='big-info'>
-            {sensor_status}
-        </div>
-
-        <br>
-
-        <div class='info-title'>
-            Waktu Deteksi
-        </div>
-
-        <div class='big-info'>
-            {latest_data.get("time", "-")}
-        </div>
-
-    </div>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
 # ======================================
 # INFO CARD
 # ======================================
 with col2:
 
-    st.markdown(f"""
-    <div class='card'>
+    st.markdown(
+        f"""
+        <div class='card'>
 
-        <div class='info-title'>
-            Kedatangan Air Terakhir
+            <div class='info-title'>
+                Kedatangan Air Terakhir
+            </div>
+
+            <div class='big-info'>
+                {latest_data.get("last_water_time", "-")}
+            </div>
+
+            <br><br>
+
+            <div class='info-title'>
+                Durasi Distribusi Terakhir
+            </div>
+
+            <div class='big-info'>
+                {latest_data.get("duration", "-")}
+            </div>
+
         </div>
-
-        <div class='big-info'>
-            {latest_data.get("last_water_time", "-")}
-        </div>
-
-        <br><br>
-
-        <div class='info-title'>
-            Durasi Distribusi Terakhir
-        </div>
-
-        <div class='big-info'>
-            {latest_data.get("duration", "-")}
-        </div>
-
-    </div>
-    """, unsafe_allow_html=True)
+        """,
+        unsafe_allow_html=True
+    )
 
 # ======================================
 # HISTORY TITLE
