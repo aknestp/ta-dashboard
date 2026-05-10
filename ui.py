@@ -198,4 +198,116 @@ def render_dashboard(
     st.markdown(f"""
     <div class="alert-banner" style="border-left: {border_left};">
         <h2 style="color: {color_status}; margin: 0; font-weight: 700; font-size: 24px; letter-spacing: 0.5px;">
-            {status_text.
+            {status_text.upper()}
+        </h2>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ==================================================
+    # TOP SECTION KPIs
+    # ==================================================
+    col1, col2 = st.columns(2)
+
+    with col1:
+        with st.container(border=True):
+            st.markdown("<div style='color:#334155; font-weight:600; margin-bottom:12px;'>Konektivitas Sensor</div>", unsafe_allow_html=True)
+            
+            sub_col1, sub_col2 = st.columns(2)
+            with sub_col1:
+                st.metric("Status Koneksi", sensor_status)
+            with sub_col2:
+                st.metric("Waktu Deteksi", latest_data.get("time", "-"))
+
+    with col2:
+        with st.container(border=True):
+            st.markdown("<div style='color:#334155; font-weight:600; margin-bottom:12px;'>Data Distribusi</div>", unsafe_allow_html=True)
+            
+            sub_col3, sub_col4 = st.columns(2)
+            with sub_col3:
+                st.metric("Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
+            with sub_col4:
+                st.metric("Durasi Terakhir", latest_data.get("duration", "-"))
+
+    # ==================================================
+    # HISTORY TITLE
+    # ==================================================
+    st.markdown('<div class="section-title">Riwayat Distribusi Air</div>', unsafe_allow_html=True)
+
+    history_df = pd.DataFrame(history_data)
+
+    if not history_df.empty:
+        st.dataframe(
+            history_df,
+            use_container_width=True,
+            height=300
+        )
+    else:
+        st.info("Belum ada riwayat distribusi pada log sistem.")
+
+    # ==================================================
+    # CHART TITLE
+    # ==================================================
+    st.markdown('<div class="section-title">Pemantauan RMS Realtime</div>', unsafe_allow_html=True)
+
+    chart_df = pd.DataFrame(chart_data)
+
+    if (not chart_df.empty and "rms" in chart_df.columns):
+        st.line_chart(
+            chart_df["rms"],
+            height=350
+        )
+    else:
+        st.warning("Data RMS belum tersedia dari sensor.")
+
+    # ==================================================
+    # WARNING BUTTON & POPUP
+    # ==================================================
+    st.markdown("<br>", unsafe_allow_html=True) 
+    if "show_popup" not in st.session_state:
+        st.session_state.show_popup = False
+
+    # Tombol yang lebih clean
+    if st.button("Laporkan Gangguan Sistem", use_container_width=True):
+        st.session_state.show_popup = True
+
+    if st.session_state.show_popup:
+        @st.dialog("Otorisasi Operator")
+        def popup_operator():
+            st.markdown("Silakan masukkan kredensial untuk menyiarkan laporan gangguan.")
+            password = st.text_input("Password Operator", type="password")
+            
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                if st.button("Kirim Laporan", use_container_width=True):
+                    if password == "admin123":
+                        try:
+                            response = requests.post(
+                                f"{server_url}/send_warning",
+                                json={"message": "Distribusi air mengalami gangguan sementara"},
+                                timeout=5
+                            )
+                            if response.status_code == 200:
+                                st.success("Laporan berhasil disiarkan.")
+                                st.session_state.show_popup = False
+                            else:
+                                st.error("Gagal terhubung ke server penyiaran.")
+                        except Exception as e:
+                            st.error(f"Sistem error: {e}")
+                    else:
+                        st.error("Kredensial tidak valid.")
+            with col2:
+                # Tombol batal standar Streamlit
+                if st.button("Batalkan", type="secondary", use_container_width=True):
+                    st.session_state.show_popup = False
+
+        popup_operator()
+
+    # ==================================================
+    # FOOTER
+    # ==================================================
+    st.markdown("""
+    <div class="custom-footer">
+    © 2026 Water Distribution Early Warning System. All rights reserved.
+    </div>
+    """, unsafe_allow_html=True)
