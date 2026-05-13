@@ -188,11 +188,10 @@ def render_dashboard(
     </div>
     """, unsafe_allow_html=True)
 
-    # ==================================================
+   # ==================================================
     # BANNER STATUS UTAMA (DIPISAH KE ATAS)
     # ==================================================
     is_not_flowing = "TIDAK" in status_text.upper()
-    icon_status = "🔴" if is_not_flowing else "🟢"
     color_status = "#c0392b" if is_not_flowing else "#0A6847"
     border_color = "#e74c3c" if is_not_flowing else "#7ABA78"
     
@@ -201,7 +200,7 @@ def render_dashboard(
                 border-radius: 12px; margin-bottom: 20px; border: 2px solid {border_color};
                 box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
         <h2 style="color: {color_status}; margin: 0; font-weight: 900; letter-spacing: 1px;">
-            {icon_status} {status_text.upper()}
+            {status_text.upper()}
         </h2>
     </div>
     """, unsafe_allow_html=True)
