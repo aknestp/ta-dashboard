@@ -284,7 +284,7 @@ def render_dashboard(
     if "show_popup" not in st.session_state:
         st.session_state.show_popup = False
 
-    if st.button("🚨 LAPORKAN GANGGUAN DISTRIBUSI", use_container_width=True):
+    if st.button("🚨 Kirim Informasi Gangguan", use_container_width=True):
         st.session_state.show_popup = True
 
     # ==================================================
