@@ -305,7 +305,7 @@ def render_dashboard(
                             response = requests.post(
                                 f"{server_url}/send_warning",
                                 json={"message": "Distribusi air mengalami gangguan sementara"},
-                                timeout=2
+                                timeout=5
                             )
                             if response.status_code == 200:
                                 st.success("Informasi berhasil dikirim")
