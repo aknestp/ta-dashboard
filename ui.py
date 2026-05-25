@@ -300,12 +300,12 @@ def render_dashboard(
             
             with col1:
                 if st.button("Kirim Informasi", use_container_width=True):
-                    if password == "admin123":
+                    if password == "admin1":
                         try:
                             response = requests.post(
                                 f"{server_url}/send_warning",
                                 json={"message": "Distribusi air mengalami gangguan sementara"},
-                                timeout=5
+                                timeout=2
                             )
                             if response.status_code == 200:
                                 st.success("Informasi berhasil dikirim")
