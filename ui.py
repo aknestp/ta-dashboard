@@ -319,6 +319,7 @@ def render_dashboard(
             with col2:
                 if st.button("Batal", use_container_width=True):
                     st.session_state.show_popup = False
+                    st.rerun()
 
         popup_operator()
 
