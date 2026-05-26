@@ -3,14 +3,13 @@ from streamlit_autorefresh import st_autorefresh
 import requests
 import pandas as pd
 from datetime import datetime
-import pytz # TAMBAHKAN INI
+import pytz 
 
 from ui import render_dashboard
 
 # ==================================================
 # CONFIG
 # ==================================================
-# HAPUS garis miring (/) di bagian paling belakang URL
 SERVER_URL = "https://ta-backend-production-f459.up.railway.app" 
 
 st.set_page_config(
@@ -60,18 +59,17 @@ else:
     status_text = "🔴 AIR TIDAK MENGALIR"
 
 # ==================================================
-# SENSOR STATUS (PERBAIKAN ZONA WAKTU)
+# SENSOR STATUS (ZONA WAKTU WIB)
 # ==================================================
 sensor_status = "🔴 Offline"
 
 try:
     latest_time = pd.to_datetime(latest_data.get("time"))
 
-    # Paksa waktu saat ini (now) menjadi WIB agar sejajar dengan server Flask
+    # Sinkronisasi dengan waktu server Flask (WIB)
     tz_wib = pytz.timezone('Asia/Jakarta')
     now_wib = datetime.now(tz_wib).replace(tzinfo=None)
 
-    # Hitung selisih detik yang sesungguhnya
     selisih = (now_wib - latest_time).total_seconds()
 
     if selisih >= 0 and selisih < 30:
