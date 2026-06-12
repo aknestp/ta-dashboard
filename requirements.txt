@@ -5,4 +5,3 @@ numpy
 requests
 pytz
 plotly
-streamlit-float
