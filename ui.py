@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import requests
+import plotly.express as px
+from streamlit_float import *
 
 # ==================================================
 # CSS MODERN & RESPONSIVE
@@ -156,123 +158,275 @@ def render_dashboard(
     sensor_status,
     server_url
 ):
-    load_css()
+    float_init()
 
-    # HEADER
+    st.markdown("""
+    <style>
+    .stApp{
+        background:linear-gradient(180deg,#eef7f2 0%,#f8faf9 100%);
+    }
+
+    .top-header{
+        background:linear-gradient(135deg,#0A6847,#2E8B57,#7ABA78);
+        padding:35px;
+        border-radius:24px;
+        text-align:center;
+        box-shadow:0 15px 35px rgba(0,0,0,0.12);
+        margin-bottom:25px;
+    }
+
+    .top-title{
+        color:white;
+        font-size:42px;
+        font-weight:900;
+    }
+
+    .top-subtitle{
+        color:#EAF7EE;
+        font-size:16px;
+    }
+
+    .status-card{
+        background:white;
+        padding:35px;
+        border-radius:24px;
+        text-align:center;
+        margin-bottom:25px;
+        box-shadow:0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    .status-title{
+        color:#888;
+        font-size:18px;
+        font-weight:700;
+        margin-bottom:10px;
+    }
+
+    .status-value{
+        font-size:42px;
+        font-weight:900;
+    }
+
+    [data-testid="stMetric"]{
+        background:white;
+        padding:20px;
+        border-radius:20px;
+        box-shadow:0 6px 20px rgba(0,0,0,0.06);
+        border:none;
+    }
+
+    [data-testid="stMetric"]:hover{
+        transform:translateY(-3px);
+        transition:0.3s;
+    }
+
+    [data-testid="stDataFrame"]{
+        border-radius:20px;
+        overflow:hidden;
+    }
+
+    .section-title{
+        color:#0A6847;
+        font-size:24px;
+        font-weight:800;
+        margin-top:20px;
+        margin-bottom:15px;
+    }
+
+    .footer{
+        text-align:center;
+        margin-top:50px;
+        color:#7f8c8d;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
     st.markdown("""
     <div class="top-header">
-        <div class="top-title">💧 SISTEM PERINGATAN DINI KEDATANGAN AIR</div>
-        <div class="top-subtitle">Monitoring Distribusi Air Berbasis IoT dan Machine Learning</div>
+        <div class="top-title">
+            💧 SISTEM PERINGATAN DINI KEDATANGAN AIR
+        </div>
+
+        <div class="top-subtitle">
+            Monitoring Distribusi Air Berbasis IoT dan Machine Learning
+        </div>
     </div>
     """, unsafe_allow_html=True)
 
-    # BANNER STATUS UTAMA 
     is_not_flowing = "TIDAK" in status_text.upper()
-    color_status = "#c0392b" if is_not_flowing else "#0A6847"
-    border_color = "#e74c3c" if is_not_flowing else "#7ABA78"
-    
+    color_status = "#e74c3c" if is_not_flowing else "#27ae60"
+
     st.markdown(f"""
-    <div style="text-align: center; background-color: #ffffff; padding: 15px; 
-                border-radius: 12px; margin-bottom: 20px; border: 2px solid {border_color};
-                box-shadow: 0 4px 12px rgba(0,0,0,0.04);">
-        <h2 style="color: {color_status}; margin: 0; font-weight: 900; letter-spacing: 1px;">
-            {status_text.upper()}
-        </h2>
+    <div class="status-card">
+
+        <div class="status-title">
+            STATUS DISTRIBUSI AIR
+        </div>
+
+        <div class="status-value"
+        style="color:{color_status};">
+            {status_text}
+        </div>
+
     </div>
     """, unsafe_allow_html=True)
 
-    # TOP SECTION 
-    col1, col2 = st.columns(2)
+    col1,col2,col3,col4 = st.columns(4)
 
     with col1:
-        with st.container(border=True):
-            st.markdown("### 📡 Status Sensor")
-            sub_col1, sub_col2 = st.columns(2)
-            with sub_col1:
-                st.metric("Koneksi", sensor_status)
-            with sub_col2:
-                st.metric("Waktu Deteksi", latest_data.get("time", "-"))
+        st.metric(
+            "📡 Status Sensor",
+            sensor_status
+        )
 
     with col2:
-        with st.container(border=True):
-            st.markdown("### 📊 Ringkasan Distribusi")
-            sub_col3, sub_col4 = st.columns(2)
-            with sub_col3:
-                st.metric("Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
-            with sub_col4:
-                st.metric("Durasi Terakhir", latest_data.get("duration", "-"))
+        st.metric(
+            "🕒 Waktu Deteksi",
+            latest_data.get("time","-")
+        )
 
-    # HISTORY 
-    st.markdown("""
-    <div class="section-title">
-    📋 Riwayat Distribusi Air
-    </div>
-    """, unsafe_allow_html=True)
+    with col3:
+        st.metric(
+            "💧 Kedatangan Terakhir",
+            latest_data.get("last_water_time","-")
+        )
 
-    history_df = pd.DataFrame(history_data)
-    if not history_df.empty:
-        st.dataframe(history_df, use_container_width=True, height=300)
-    else:
-        st.info("Belum ada riwayat distribusi")
+    with col4:
+        st.metric(
+            "⏱ Durasi Terakhir",
+            latest_data.get("duration","-")
+        )
 
-    # CHART 
-    st.markdown("""
-    <div class="section-title">
-    📈 Grafik RMS Realtime
-    </div>
-    """, unsafe_allow_html=True)
+    st.markdown(
+        '<div class="section-title">📈 Grafik RMS Realtime</div>',
+        unsafe_allow_html=True
+    )
 
     chart_df = pd.DataFrame(chart_data)
-    if (not chart_df.empty and "rms" in chart_df.columns):
-        st.line_chart(chart_df["rms"], height=350)
+
+    if not chart_df.empty and "rms" in chart_df.columns:
+
+        fig = px.line(
+            chart_df,
+            y="rms",
+            markers=True
+        )
+
+        fig.update_layout(
+            template="plotly_white",
+            height=420,
+            margin=dict(
+                l=20,
+                r=20,
+                t=20,
+                b=20
+            ),
+            xaxis_title="Data",
+            yaxis_title="RMS"
+        )
+
+        st.plotly_chart(
+            fig,
+            use_container_width=True
+        )
+
     else:
         st.warning("Data RMS belum tersedia")
 
-    # WARNING BUTTON & POPUP
-    st.markdown("<br>", unsafe_allow_html=True) 
+    st.markdown(
+        '<div class="section-title">📋 Riwayat Distribusi Air</div>',
+        unsafe_allow_html=True
+    )
+
+    history_df = pd.DataFrame(history_data)
+
+    if not history_df.empty:
+        st.dataframe(
+            history_df,
+            use_container_width=True,
+            height=320
+        )
+    else:
+        st.info("Belum ada riwayat distribusi")
+
     if "show_popup" not in st.session_state:
         st.session_state.show_popup = False
 
-    if st.button("🚨 Kirim Informasi Gangguan", use_container_width=True):
+    if st.button("🚨", key="floating_warning"):
         st.session_state.show_popup = True
 
+    float_parent(
+        css="""
+        position:fixed;
+        bottom:25px;
+        right:25px;
+        width:80px;
+        height:80px;
+        border-radius:50%;
+        z-index:999;
+        """
+    )
+
     if st.session_state.show_popup:
+
         @st.dialog("Konfirmasi Operator")
         def popup_operator():
-            password = st.text_input("Masukkan Password Operator", type="password")
-            st.warning("Pesan yang akan dikirim ke Grup WhatsApp Warga:\n\nDistribusi air mengalami gangguan sementara")
-            
-            col1, col2 = st.columns(2)
-            
-            with col1:
-                if st.button("Kirim Informasi", use_container_width=True):
+
+            password = st.text_input(
+                "Masukkan Password Operator",
+                type="password"
+            )
+
+            st.warning(
+                "Pesan yang akan dikirim ke Grup WhatsApp Warga:\n\nDistribusi air mengalami gangguan sementara"
+            )
+
+            c1,c2 = st.columns(2)
+
+            with c1:
+                if st.button("Kirim Informasi"):
+
                     if password == "admin1":
+
                         try:
+
                             response = requests.post(
                                 f"{server_url}/send_warning",
-                                json={"message": "Distribusi air mengalami gangguan sementara"},
+                                json={
+                                    "message":"Distribusi air mengalami gangguan sementara"
+                                },
                                 timeout=5
                             )
+
                             if response.status_code == 200:
-                                st.success("Informasi berhasil dikirim ke Grup WA!")
+                                st.success(
+                                    "Informasi berhasil dikirim ke Grup WA!"
+                                )
                                 st.session_state.show_popup = False
+
                             else:
-                                st.error("Gagal mengirim informasi")
+                                st.error(
+                                    "Gagal mengirim informasi"
+                                )
+
                         except Exception as e:
                             st.error(e)
+
                     else:
                         st.error("Password salah")
-            with col2:
-                if st.button("Batal", use_container_width=True):
+
+            with c2:
+
+                if st.button("Batal"):
                     st.session_state.show_popup = False
                     st.rerun()
 
         popup_operator()
 
-    # FOOTER
     st.markdown("""
     <div class="footer">
-    © 2026 Sistem Peringatan Dini Kedatangan Air Distribusi <br>
-    Berbasis IoT dan Machine Learning
+        © 2026 Sistem Peringatan Dini Kedatangan Air Distribusi
+        <br>
+        Berbasis IoT dan Machine Learning
     </div>
     """, unsafe_allow_html=True)
