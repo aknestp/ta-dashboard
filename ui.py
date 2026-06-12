@@ -203,40 +203,8 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         </div>
         """, unsafe_allow_html=True)
 
-    # === GRAFIK REALTIME ===
-    st.markdown("""
-        <div class="custom-box">
-            <div class="section-header">
-                <div class="section-title">📈 Grafik RMS Realtime</div>
-                <div class="badge-update"><span class="dot-green" style="box-shadow: none; width:6px; height:6px;"></span> Update realtime</div>
-            </div>
-    """, unsafe_allow_html=True)
 
-    chart_df = pd.DataFrame(chart_data)
-    if not chart_df.empty and "rms" in chart_df.columns:
-        x_axis = chart_df["time"] if "time" in chart_df.columns else chart_df.index
-        y_axis = chart_df["rms"]
-
-        fig = go.Figure()
-        fig.add_trace(go.Scatter(
-            x=x_axis, y=y_axis, mode='lines+markers',
-            line=dict(color='#10b981', width=3),
-            marker=dict(size=6, color='white', line=dict(width=2, color='#10b981')),
-            fill='tozeroy', fillcolor='rgba(16, 185, 129, 0.1)'
-        ))
-        fig.update_layout(
-            height=280, margin=dict(l=0, r=0, t=10, b=0),
-            xaxis=dict(showgrid=True, gridcolor='#f1f5f9', tickfont=dict(color='#94a3b8', size=10)),
-            yaxis=dict(showgrid=True, gridcolor='#f1f5f9', tickfont=dict(color='#94a3b8', size=10), title="RMS"),
-            plot_bgcolor='white', paper_bgcolor='white'
-        )
-        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
-    else:
-        st.info("📊 Data grafik sedang disiapkan atau sensor belum mengirim data.")
-
-    st.markdown("</div>", unsafe_allow_html=True)
-
-    # === TABEL RIWAYAT ===
+    # === TABEL RIWAYAT (Sekarang berada DI ATAS Grafik) ===
     html_table = """
         <div class="custom-box" style="margin-bottom: 25px;">
             <div class="section-title" style="margin-bottom: 15px;">📋 Riwayat Distribusi</div>
@@ -272,9 +240,44 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     
     st.markdown(html_table, unsafe_allow_html=True)
 
+
+    # === GRAFIK REALTIME (Sekarang berada DI BAWAH Tabel) ===
+    st.markdown("""
+        <div class="custom-box">
+            <div class="section-header">
+                <div class="section-title">📈 Grafik RMS Realtime</div>
+                <div class="badge-update"><span class="dot-green" style="box-shadow: none; width:6px; height:6px;"></span> Update realtime</div>
+            </div>
+    """, unsafe_allow_html=True)
+
+    chart_df = pd.DataFrame(chart_data)
+    if not chart_df.empty and "rms" in chart_df.columns:
+        x_axis = chart_df["time"] if "time" in chart_df.columns else chart_df.index
+        y_axis = chart_df["rms"]
+
+        fig = go.Figure()
+        fig.add_trace(go.Scatter(
+            x=x_axis, y=y_axis, mode='lines+markers',
+            line=dict(color='#10b981', width=3),
+            marker=dict(size=6, color='white', line=dict(width=2, color='#10b981')),
+            fill='tozeroy', fillcolor='rgba(16, 185, 129, 0.1)'
+        ))
+        fig.update_layout(
+            height=280, margin=dict(l=0, r=0, t=10, b=0),
+            xaxis=dict(showgrid=True, gridcolor='#f1f5f9', tickfont=dict(color='#94a3b8', size=10)),
+            yaxis=dict(showgrid=True, gridcolor='#f1f5f9', tickfont=dict(color='#94a3b8', size=10), title="RMS"),
+            plot_bgcolor='white', paper_bgcolor='white'
+        )
+        st.plotly_chart(fig, use_container_width=True, config={'displayModeBar': False})
+    else:
+        st.info("📊 Data grafik sedang disiapkan atau sensor belum mengirim data.")
+
+    st.markdown("</div>", unsafe_allow_html=True)
+
+
     # === FOOTER ===
     st.markdown("""
-    <div style="display: flex; align-items: center; gap: 10px; color: #94a3b8; font-size: 12px; margin-bottom: 30px;">
+    <div style="display: flex; align-items: center; gap: 10px; color: #94a3b8; font-size: 12px; margin-top: 15px; margin-bottom: 30px;">
         <span style="font-size: 16px; color: #10b981;">🛡️</span> 
         <div>
             © 2026 Sistem Peringatan Dini Kedatangan Air Distribusi<br>
