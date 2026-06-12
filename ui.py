@@ -3,7 +3,7 @@ import pandas as pd
 import plotly.graph_objects as go
 import requests
 from datetime import datetime
-import pytz  # Pastikan import pytz ditambahkan
+import pytz 
 
 # ==================================================
 # CSS MODERN (RESPONSIVE & FULL-WIDTH)
@@ -21,14 +21,18 @@ def load_css():
         background-color: #f1f5f9; 
     }
     
-    /* HILANGKAN PADDING BAWAAN AGAR HEADER FULL LAYAR */
-    .block-container {
+    /* 1. PERBAIKAN JARAK HEADER (HILANGKAN PADDING BAWAAN STREAMLIT) */
+    .block-container, [data-testid="stAppViewBlockContainer"] {
         max-width: 100% !important;
-        padding: 0 !important;
-        margin: 0 !important;
+        padding-top: 0 !important;
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-top: 0 !important;
+    }
+    header[data-testid="stHeader"], div[data-testid="stToolbar"] { 
+        display: none !important; 
     }
 
-    /* CONTAINER UTAMA (Menyesuaikan di Desktop & HP) */
     .app-shell {
         background: #ffffff;
         box-shadow: 0 4px 20px rgba(0,0,0,0.05);
@@ -47,20 +51,10 @@ def load_css():
         align-items: center; 
         color: white;
     }
-    .header-left { 
-        display: flex; 
-        align-items: center; 
-        gap: 15px; 
-    }
+    .header-left { display: flex; align-items: center; gap: 15px; }
     .header-logo {
-        background: rgba(255,255,255,0.2); 
-        width: 45px; 
-        height: 45px;
-        border-radius: 50%; 
-        display: flex; 
-        justify-content: center; 
-        align-items: center; 
-        font-size: 24px;
+        background: rgba(255,255,255,0.2); width: 45px; height: 45px;
+        border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px;
         flex-shrink: 0;
     }
     .header-title { font-size: 26px; font-weight: 700; margin: 0; line-height: 1.2; }
@@ -68,14 +62,8 @@ def load_css():
     
     .header-right { text-align: right; }
     .status-badge {
-        background: rgba(255,255,255,0.15); 
-        padding: 6px 14px; 
-        border-radius: 20px;
-        font-size: 13px; 
-        display: inline-flex; 
-        align-items: center; 
-        gap: 8px; 
-        margin-bottom: 5px;
+        background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px;
+        font-size: 13px; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 5px;
     }
     .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
     .dot-red { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; }
@@ -83,12 +71,8 @@ def load_css():
 
     /* STATUS UTAMA */
     .status-container {
-        padding: 40px 20px; 
-        text-align: center; 
-        background: #fafafa;
-        margin: 20px 5%; 
-        border-radius: 16px; 
-        border: 1px solid #e2e8f0;
+        padding: 40px 20px; text-align: center; background: #fafafa;
+        margin: 20px 5%; border-radius: 16px; border: 1px solid #e2e8f0;
     }
     .check-circle {
         color: white; width: 75px; height: 75px; border-radius: 50%;
@@ -98,17 +82,13 @@ def load_css():
     .status-text-main { font-size: 42px; font-weight: 800; margin: 0; letter-spacing: -1px; }
     .status-sub-main { color: #64748b; font-size: 16px; margin-top: 8px; }
 
-    /* CONTENT WRAPPER AGAR ADA MARGIN DI KIRI KANAN */
-    .content-wrapper {
-        padding: 0 5%;
-    }
+    .content-wrapper { padding: 0 5%; }
 
     /* SUMMARY CARD */
     .summary-card {
         background: white; border: 1px solid #e2e8f0; border-radius: 12px;
         padding: 16px; display: flex; align-items: center; gap: 15px; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.02);
-        height: 100%;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.02); height: 100%;
     }
     .card-icon {
         background: #ecfdf5; color: #10b981; width: 45px; height: 45px;
@@ -119,13 +99,9 @@ def load_css():
     .card-value { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
     .card-subtitle { font-size: 11px; color: #94a3b8; }
 
-    /* BAGIAN SECTION */
     .custom-box {
-        margin-top: 20px; 
-        background: white; 
-        padding: 20px; 
-        border-radius: 12px; 
-        border: 1px solid #e2e8f0;
+        margin-top: 20px; background: white; padding: 20px; 
+        border-radius: 12px; border: 1px solid #e2e8f0;
     }
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
     .section-title { font-size: 18px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
@@ -134,14 +110,14 @@ def load_css():
         font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
     }
 
-    /* TABLE RESPONSIVE */
-    .table-container { overflow-x: auto; }
-    .custom-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; min-width: 600px; }
-    .custom-table th { background: #f8fafc; color: #0A6847; font-weight: 600; padding: 12px 15px; border-bottom: 2px solid #e2e8f0; }
+    /* 2. PERBAIKAN TABEL RESPONSIVE & RAPI */
+    .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .custom-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; white-space: nowrap; }
+    .custom-table th { background: #f8fafc; color: #0A6847; font-weight: 600; padding: 14px 15px; border-bottom: 2px solid #e2e8f0; }
     .custom-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; color: #334155; }
-    .pill-success { background: #dcfce7; color: #166534; padding: 4px 10px; border-radius: 6px; font-weight: 500; font-size: 12px; }
+    .custom-table tbody tr:hover { background-color: #f8fafc; }
+    .pill-success { background: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; }
 
-    /* TOMBOL MENGAMBANG (FAB) */
     .st-key-fab_trigger { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
     .st-key-fab_trigger button {
         width: 60px; height: 60px; border-radius: 50%; background: #ef4444 !important;
@@ -149,46 +125,25 @@ def load_css():
     }
     .st-key-fab_trigger button p { font-size: 24px !important; color: white !important; margin: 0 !important; }
     
-    header[data-testid="stHeader"] { display: none; }
     footer { display: none; }
 
-    /* ==================================================
-       MEDIA QUERIES (KHUSUS UNTUK HP / LAYAR KECIL)
-       ================================================== */
     @media (max-width: 768px) {
-        .main-header {
-            flex-direction: column;
-            text-align: center;
-            padding: 20px 15px;
-            gap: 15px;
-        }
-        .header-left {
-            flex-direction: column;
-            gap: 10px;
-        }
+        .main-header { flex-direction: column; text-align: center; padding: 20px 15px; gap: 15px; }
+        .header-left { flex-direction: column; gap: 10px; }
         .header-logo { width: 40px; height: 40px; font-size: 20px; }
         .header-title { font-size: 20px; }
         .header-subtitle { font-size: 12px; }
-        .header-right { text-align: center; }
-        
         .status-container { padding: 25px 15px; margin: 15px; }
-        .check-circle { width: 60px; height: 60px; font-size: 30px; }
         .status-text-main { font-size: 28px; }
-        .status-sub-main { font-size: 14px; }
-        
-        .section-header { flex-direction: column; align-items: flex-start; gap: 10px; }
         .custom-box { padding: 15px; margin-top: 15px; }
         .content-wrapper { padding: 0 15px; }
-        
-        div[data-testid="stVerticalBlock"] > div {
-            gap: 10px !important;
-        }
+        div[data-testid="stVerticalBlock"] > div { gap: 10px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
 
 # ==================================================
-# RENDER UTAMA (DIPANGGIL OLEH DASHBOARD.PY)
+# RENDER UTAMA
 # ==================================================
 def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_status, server_url):
     load_css()
@@ -196,22 +151,34 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     if "show_popup" not in st.session_state:
         st.session_state.show_popup = False
 
-    is_flowing = "TIDAK" not in status_text.upper()
+    # 3. PERBAIKAN LOGIKA STATUS SENSOR REALTIME
     is_online = "Online" in sensor_status
+    history_df = pd.DataFrame(history_data)
 
-    main_color = "#10b981" if is_flowing else "#ef4444"
-    main_bg = "#ecfdf5" if is_flowing else "#fef2f2"
+    # Jika Offline, abaikan data terakhir, paksa tampilkan status MATI/TERPUTUS
+    if not is_online:
+        is_flowing = False
+        status_icon = "🔌"
+        status_title = "SENSOR TERPUTUS"
+        status_subtitle = "Alat tidak terhubung ke server. Mengecek koneksi..."
+        main_color = "#64748b" # Warna Abu-abu (Offline)
+        main_bg = "#f1f5f9"
+    else:
+        is_flowing = "TIDAK" not in status_text.upper()
+        status_icon = "✓" if is_flowing else "✕"
+        status_title = "AIR MENGALIR" if is_flowing else "AIR TIDAK MENGALIR"
+        status_subtitle = "Sistem dalam kondisi normal" if is_flowing else "Distribusi air sedang terhenti/gangguan"
+        main_color = "#10b981" if is_flowing else "#ef4444"
+        main_bg = "#ecfdf5" if is_flowing else "#fef2f2"
+
     dot_class = "dot-green" if is_online else "dot-red"
     sensor_txt = "Terhubung" if is_online else "Terputus"
-    
-    # PERBAIKAN ZONA WAKTU KE WIB (Asia/Jakarta)
     tz_wib = pytz.timezone('Asia/Jakarta')
     waktu_sekarang = datetime.now(tz_wib).strftime("%d %b %Y - %H:%M:%S")
 
-    # BUKA APP SHELL
     st.markdown('<div class="app-shell">', unsafe_allow_html=True)
 
-    # 1. HEADER FULL WIDTH (Kiri ke Kanan)
+    # HEADER
     st.markdown(f"""
         <div class="main-header">
             <div class="header-left">
@@ -228,11 +195,7 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         </div>
     """, unsafe_allow_html=True)
 
-    # 2. STATUS UTAMA
-    status_icon = "✓" if is_flowing else "✕"
-    status_title = "AIR MENGALIR" if is_flowing else "AIR TIDAK MENGALIR"
-    status_subtitle = "Sistem dalam kondisi normal" if is_flowing else "Distribusi air sedang terhenti/gangguan"
-    
+    # STATUS UTAMA
     st.markdown(f"""
         <div class="status-container">
             <div class="check-circle" style="background: {main_color}; box-shadow: 0 4px 15px {main_color}40;">{status_icon}</div>
@@ -241,15 +204,18 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         </div>
     """, unsafe_allow_html=True)
 
-    # BUKA CONTENT WRAPPER (Agar konten di bawahnya memiliki jarak tepi yang rapi)
     st.markdown('<div class="content-wrapper">', unsafe_allow_html=True)
 
-    # 3. 4 RINGKASAN UTAMA
+    # 4. PERBAIKAN PENGAMBILAN DATA "DURASI TERAKHIR"
     c1, c2, c3, c4 = st.columns(4)
-    
     waktu_deteksi = latest_data.get("time", "-")
     kedatangan_terakhir = latest_data.get("last_water_time", "-")
-    durasi_terakhir = latest_data.get("duration", "-")
+    
+    # Ambil durasi dari history (siklus terakhir) bukan dari latest_data yang bernilai "Aktif"
+    if not history_df.empty and "duration" in history_df.columns:
+        durasi_terakhir = history_df.iloc[0]["duration"] # Ambil baris pertama di tabel riwayat
+    else:
+        durasi_terakhir = "-"
 
     with c1:
         st.markdown(f"""
@@ -299,7 +265,7 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         </div>
         """, unsafe_allow_html=True)
 
-    # 4. GRAFIK REALTIME DINAMIS
+    # GRAFIK REALTIME
     st.markdown("""
         <div class="custom-box">
             <div class="section-header">
@@ -315,12 +281,10 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
 
         fig = go.Figure()
         fig.add_trace(go.Scatter(
-            x=x_axis, y=y_axis, 
-            mode='lines+markers',
+            x=x_axis, y=y_axis, mode='lines+markers',
             line=dict(color='#10b981', width=3),
             marker=dict(size=6, color='white', line=dict(width=2, color='#10b981')),
-            fill='tozeroy',
-            fillcolor='rgba(16, 185, 129, 0.1)'
+            fill='tozeroy', fillcolor='rgba(16, 185, 129, 0.1)'
         ))
         fig.update_layout(
             height=280, margin=dict(l=0, r=0, t=10, b=0),
@@ -334,7 +298,7 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # 5. TABEL RIWAYAT DINAMIS
+    # TABEL RIWAYAT
     st.markdown("""
         <div class="custom-box" style="margin-bottom: 25px;">
             <div class="section-title" style="margin-bottom: 15px;">📋 Riwayat Distribusi</div>
@@ -352,13 +316,11 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
                     <tbody>
     """, unsafe_allow_html=True)
 
-    history_df = pd.DataFrame(history_data)
     if not history_df.empty:
         for i, row in history_df.head(5).iterrows(): 
-            w_deteksi = row.get("time", "-")
-            w_kedatangan = row.get("last_water_time", w_deteksi)
-            w_durasi = row.get("duration", "-")
-            w_status = "Selesai"
+            w_deteksi = str(row.get("time", "-"))
+            w_kedatangan = str(row.get("last_water_time", w_deteksi))
+            w_durasi = str(row.get("duration", "-"))
             
             st.markdown(f"""
                 <tr>
@@ -366,11 +328,11 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
                     <td>{w_deteksi}</td>
                     <td>{w_kedatangan}</td>
                     <td>{w_durasi}</td>
-                    <td><span class="pill-success">{w_status}</span></td>
+                    <td><span class="pill-success">Selesai</span></td>
                 </tr>
             """, unsafe_allow_html=True)
     else:
-         st.markdown("<tr><td colspan='5' style='text-align:center;'>Belum ada riwayat distribusi</td></tr>", unsafe_allow_html=True)
+         st.markdown("<tr><td colspan='5' style='text-align:center; padding: 20px;'>Belum ada riwayat distribusi</td></tr>", unsafe_allow_html=True)
 
     st.markdown("""
                     </tbody>
@@ -390,14 +352,14 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     </div>
     """, unsafe_allow_html=True)
 
-    st.markdown("</div>", unsafe_allow_html=True) # TUTUP CONTENT WRAPPER
-    st.markdown("</div>", unsafe_allow_html=True) # TUTUP APP SHELL
+    st.markdown("</div>", unsafe_allow_html=True) 
+    st.markdown("</div>", unsafe_allow_html=True) 
 
-    # 6. FAB BUTTON (GANGGUAN)
+    # FAB BUTTON (GANGGUAN)
     if st.button("🔔", key="fab_trigger", help="Kirim Peringatan Gangguan"):
         st.session_state.show_popup = True
 
-    # 7. POPUP OPERATOR
+    # POPUP OPERATOR
     if st.session_state.show_popup:
         @st.dialog("⚠️ Kirim Informasi Gangguan")
         def popup_operator():
