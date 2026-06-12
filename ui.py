@@ -1,182 +1,161 @@
 import streamlit as st
 import pandas as pd
 import requests
+import plotly.express as px
+
 
 # ==================================================
-# CSS MODERN & RESPONSIVE (GLASSMORPHISM)
+# MODERN UI STYLE
 # ==================================================
 def load_css():
     st.markdown("""
     <style>
-    /* === GLOBAL FONTS & COLORS === */
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&display=swap');
-    
-    :root {
-        --primary-color: #0A6847;
-        --secondary-color: #7ABA78;
-        --accent-blue: #0984e3;
-        --danger-color: #e74c3c;
-        --bg-gradient: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
-        --card-bg: rgba(255, 255, 255, 0.85);
-        --text-main: #1e293b;
-        --text-muted: #64748b;
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+
+    * {
+        font-family: 'Plus Jakarta Sans', sans-serif;
     }
 
-    /* APP BACKGROUND */
+    :root {
+        --primary: #0A6847;
+        --secondary: #10b981;
+        --danger: #e74c3c;
+        --bg: linear-gradient(135deg, #f6f9fc 0%, #eef2f5 100%);
+        --card: rgba(255, 255, 255, 0.90);
+    }
+
     .stApp {
-        background: var(--bg-gradient);
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        color: var(--text-main);
+        background: var(--bg);
     }
 
     .block-container {
+        max-width: 1200px;
         padding-top: 2rem;
         padding-bottom: 2rem;
-        max-width: 1100px;
     }
 
-    /* === GLASSMORPHISM HEADER === */
-    .modern-header {
-        background: linear-gradient(135deg, #0A6847 0%, #10b981 100%);
-        padding: 35px;
-        border-radius: 20px;
+    .hero-header {
+        background: linear-gradient(135deg, #0A6847, #10b981);
+        padding: 40px;
+        border-radius: 28px;
+        text-align: center;
+        box-shadow: 0 15px 40px rgba(16, 185, 129, .25);
         margin-bottom: 30px;
-        box-shadow: 0 10px 40px rgba(10, 104, 71, 0.25);
-        text-align: center;
-        backdrop-filter: blur(10px);
-        border: 1px solid rgba(255,255,255,0.2);
     }
-    .modern-header h1 {
-        color: #ffffff;
-        font-size: 42px;
+
+    .hero-title {
+        color: white;
+        font-size: 44px;
         font-weight: 800;
-        letter-spacing: -1px;
-        margin: 0;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 8px;
     }
-    .modern-header p {
-        color: rgba(255,255,255,0.9);
+
+    .hero-subtitle {
+        color: rgba(255, 255, 255, .9);
         font-size: 16px;
-        font-weight: 400;
-        margin-top: 8px;
     }
 
-    /* === STATUS CARD (GLASS STYLE) === */
-    .status-card {
-        background: var(--card-bg);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255,255,255,0.6);
-        border-radius: 16px;
-        padding: 20px;
+    .status-hero {
+        background: white;
+        border-radius: 28px;
+        padding: 40px;
         text-align: center;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, .05);
         margin-bottom: 25px;
-        transition: transform 0.3s ease;
-    }
-    .status-card:hover {
-        transform: translateY(-2px);
-    }
-    .status-text {
-        font-size: 28px;
-        font-weight: 800;
-        letter-spacing: 1px;
     }
 
-    /* === METRIC CARDS === */
+    .status-icon {
+        font-size: 70px;
+        margin-bottom: 10px;
+    }
+
+    .status-title {
+        font-size: 52px;
+        font-weight: 900;
+        letter-spacing: -1px;
+    }
+
+    .status-subtitle {
+        color: #64748b;
+        margin-top: 8px;
+        font-size: 15px;
+    }
+
     [data-testid="stMetric"] {
-        background: var(--card-bg);
+        background: white;
         border: none;
-        border-radius: 14px;
+        border-radius: 20px;
         padding: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-        border-left: 4px solid var(--primary-color);
+        box-shadow: 0 6px 20px rgba(0, 0, 0, .04);
+        border-top: 4px solid #10b981;
     }
-    [data-testid="stMetricLabel"] {
-        color: var(--text-muted);
-        font-weight: 600;
-        font-size: 14px;
-    }
+
     [data-testid="stMetricValue"] {
-        color: var(--primary-color);
+        color: #0A6847;
         font-weight: 800;
-        font-size: 26px;
     }
 
-    /* === SECTIONS === */
-    .section-header {
-        color: var(--primary-color);
-        font-size: 22px;
+    .section-title {
+        font-size: 24px;
         font-weight: 800;
-        margin-top: 30px;
+        color: #0A6847;
+        margin-top: 25px;
         margin-bottom: 20px;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-    }
-    .section-header::after {
-        content: "";
-        flex: 1;
-        height: 2px;
-        background: linear-gradient(90deg, var(--secondary-color), transparent);
     }
 
-    /* === DATAFRAME & CHART === */
-    div[data-testid="stDataFrame"], div[data-testid="stVegaLiteChart"] {
-        background: var(--card-bg);
-        border-radius: 14px;
-        padding: 15px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.04);
-        border: 1px solid rgba(255,255,255,0.6);
+    div[data-testid="stDataFrame"] {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, .05);
     }
 
-    /* === FLOATING ACTION BUTTON (FAB) === */
-    /* Target the specific button by key using data-based attributes */
+    /* === MODERN BUTTON === */
+    .stButton > button {
+        background: linear-gradient(135deg, #e74c3c, #c0392b);
+        color: white;
+        border: none;
+        border-radius: 16px;
+        font-weight: 700;
+        box-shadow: 0 8px 20px rgba(231, 76, 60, .35);
+        transition: .3s;
+    }
+
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 25px rgba(231, 76, 60, .45);
+    }
+
+    /* === FAB BUTTON (FLOATING) === */
     button[key="fab_trigger"] {
         position: fixed !important;
-        right: 25px !important;
+        right: 30px !important;
         bottom: 40px !important;
         z-index: 9999 !important;
-        
         width: 70px !important;
         height: 70px !important;
         min-width: 70px !important;
         border-radius: 50% !important;
-        
-        background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
-        
-        color: white !important;
-        font-size: 30px !important;
-        
-        border: none !important;
-        
-        box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4) !important;
-        transition: all 0.3s ease !important;
-    }
-    button[key="fab_trigger"]:hover {
-        transform: scale(1.1) !important;
-        box-shadow: 0 12px 25px rgba(231, 76, 60, 0.5) !important;
+        font-size: 32px !important;
     }
 
-    /* === FOOTER === */
-    .modern-footer {
+    .footer {
         text-align: center;
-        color: var(--text-muted);
-        padding: 30px 0;
+        color: #64748b;
         margin-top: 50px;
         font-size: 13px;
-        border-top: 1px solid rgba(0,0,0,0.05);
     }
 
-    /* === RESPONSIVE === */
     @media (max-width: 768px) {
-        .modern-header { padding: 25px 20px; }
-        .modern-header h1 { font-size: 26px !important; }
+        .hero-title { font-size: 28px; }
+        .status-title { font-size: 34px; }
     }
     </style>
     """, unsafe_allow_html=True)
 
+
 # ==================================================
-# MAIN UI RENDER
+# MAIN RENDER
 # ==================================================
 def render_dashboard(
     latest_data,
@@ -188,102 +167,99 @@ def render_dashboard(
 ):
     load_css()
 
-    # Initialize session state
     if "show_popup" not in st.session_state:
         st.session_state.show_popup = False
 
     # --- HEADER ---
     st.markdown("""
-    <div class="modern-header">
-        <h1>💧 Sistem Peringatan Dini Air</h1>
-        <p>Monitoring Distribusi Air Berbasis IoT & Machine Learning</p>
+    <div class="hero-header">
+        <div class="hero-title">💧 Sistem Peringatan Dini Air</div>
+        <div class="hero-subtitle">Monitoring Distribusi Air Berbasis IoT & Machine Learning</div>
     </div>
     """, unsafe_allow_html=True)
 
-    # --- STATUS BANNER ---
+    # --- STATUS ---
     is_not_flowing = "TIDAK" in status_text.upper()
     status_color = "#e74c3c" if is_not_flowing else "#10b981"
-    
+    status_icon = "❌" if is_not_flowing else "✅"
+    status_subtitle = "Distribusi air sedang mengalami gangguan" if is_not_flowing else "Sistem dalam kondisi normal"
+
     st.markdown(f"""
-    <div class="status-card" style="border-top: 5px solid {status_color}">
-        <span class="status-text" style="color: {status_color}">
-            {status_text.upper()}
-        </span>
+    <div class="status-hero">
+        <div class="status-icon">{status_icon}</div>
+        <div class="status-title" style="color: {status_color};">{status_text.upper()}</div>
+        <div class="status-subtitle">{status_subtitle}</div>
     </div>
     """, unsafe_allow_html=True)
 
-    # --- METRICS SECTION ---
-    col1, col2 = st.columns(2)
-    
+    # --- SUMMARY CARDS ---
+    col1, col2, col3, col4 = st.columns(4)
+
     with col1:
-        st.markdown("### 📡 STATUS SENSOR")
-        m_col1, m_col2 = st.columns(2)
-        with m_col1:
-            st.metric("Koneksi", sensor_status)
-        with m_col2:
-            st.metric("Waktu Deteksi", latest_data.get("time", "-"))
-
+        st.metric("📡 Status Sensor", sensor_status)
     with col2:
-        st.markdown("### 📊 RINGKASAN")
-        m_col3, m_col4 = st.columns(2)
-        with m_col3:
-            st.metric("Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
-        with m_col4:
-            st.metric("Durasi Terakhir", latest_data.get("duration", "-"))
+        st.metric("🕒 Waktu Deteksi", latest_data.get("time", "-"))
+    with col3:
+        st.metric("💧 Kedatangan Terakhir", latest_data.get("last_water_time", "-"))
+    with col4:
+        st.metric("⏱ Durasi Terakhir", latest_data.get("duration", "-"))
 
-    # --- HISTORY SECTION ---
-    st.markdown("""
-    <div class="section-header">
-    📋 Riwayat Distribusi
-    </div>
-    """, unsafe_allow_html=True)
-    
-    history_df = pd.DataFrame(history_data)
-    if not history_df.empty:
-        st.dataframe(history_df, use_container_width=True, height=280, hide_index=True)
-    else:
-        st.info("Belum ada riwayat distribusi")
+    st.markdown("<br>", unsafe_allow_html=True)
 
     # --- CHART SECTION ---
-    st.markdown("""
-    <div class="section-header">
-    📈 Grafik RMS Realtime
-    </div>
-    """, unsafe_allow_html=True)
-    
+    st.markdown('<div class="section-title">📈 Grafik RMS Realtime</div>', unsafe_allow_html=True)
+
     chart_df = pd.DataFrame(chart_data)
+
     if not chart_df.empty and "rms" in chart_df.columns:
-        st.line_chart(chart_df["rms"], height=320)
+        fig = px.line(chart_df, y="rms", markers=True)
+        fig.update_layout(
+            template="plotly_white",
+            height=420,
+            margin=dict(l=10, r=10, t=10, b=10),
+            paper_bgcolor="white",
+            plot_bgcolor="white",
+            xaxis_title="Data",
+            yaxis_title="RMS",
+            showlegend=False
+        )
+        fig.update_traces(line=dict(width=3))
+        st.plotly_chart(fig, use_container_width=True)
     else:
         st.warning("Data RMS belum tersedia")
 
-    # --- FLOATING ACTION BUTTON (FAB) ---
-    # Using columns to push the button to the right side
-    
-    col_left, col_right = st.columns([9, 1])
-    
-    with col_right:
-        if st.button(
-            "🚨",
-            key="fab_trigger",
-            help="Kirim Informasi Gangguan"
-        ):
+    # --- HISTORY SECTION ---
+    st.markdown('<div class="section-title">📋 Riwayat Distribusi Air</div>', unsafe_allow_html=True)
+
+    history_df = pd.DataFrame(history_data)
+
+    if not history_df.empty:
+        st.dataframe(history_df, use_container_width=True, hide_index=True, height=320)
+    else:
+        st.info("Belum ada riwayat distribusi")
+
+    st.markdown("<br>", unsafe_allow_html=True)
+
+    # --- KONTROL OPERATOR ---
+    st.markdown('<div class="section-title">⚙️ Kontrol Operator</div>', unsafe_allow_html=True)
+
+    col_a, col_b, col_c = st.columns([8, 1, 1])
+
+    with col_c:
+        if st.button("🚨", key="fab_trigger", use_container_width=True, help="Kirim Informasi Gangguan"):
             st.session_state.show_popup = True
 
-    # --- POPUP DIALOG ---
+    # --- POPUP OPERATOR ---
     if st.session_state.show_popup:
         @st.dialog("⚠️ Kirim Informasi Gangguan")
         def popup_operator():
+            st.markdown("### Konfirmasi Operator\nInformasi ini akan dikirim ke grup WhatsApp warga.")
             password = st.text_input("Masukkan Password Operator", type="password")
-            
-            st.warning(
-                "Pesan yang akan dikirim ke Grup WhatsApp Warga:\n\n"
-                "**Distribusi air mengalami gangguan sementara**"
-            )
-            
-            p_col1, p_col2 = st.columns(2)
-            
-            with p_col1:
+            st.warning("Pesan yang akan dikirim:\n\nDistribusi air mengalami gangguan sementara.")
+
+            btn1, btn2 = st.columns(2)
+
+            with btn1:
                 if st.button("Kirim Informasi ✅", use_container_width=True):
                     if password == "admin1":
                         try:
@@ -293,17 +269,17 @@ def render_dashboard(
                                 timeout=5
                             )
                             if response.status_code == 200:
-                                st.success("Berhasil dikirim ke Grup WA!")
+                                st.success("Informasi berhasil dikirim.")
                                 st.session_state.show_popup = False
                                 st.rerun()
                             else:
-                                st.error("Gagal mengirim")
+                                st.error("Gagal mengirim informasi.")
                         except Exception as e:
                             st.error(f"Error: {e}")
                     else:
-                        st.error("Password salah")
-            
-            with p_col2:
+                        st.error("Password salah.")
+
+            with btn2:
                 if st.button("Batal ❌", use_container_width=True):
                     st.session_state.show_popup = False
                     st.rerun()
@@ -312,8 +288,8 @@ def render_dashboard(
 
     # --- FOOTER ---
     st.markdown("""
-    <div class="modern-footer">
-    © 2026 Sistem Peringatan Dini Kedataan Air Distribusi <br>
-    Powered by IoT & Machine Learning
+    <div class="footer">
+        © 2026 Sistem Peringatan Dini Kedatangan Air Distribusi<br>
+        Powered by IoT & Machine Learning
     </div>
     """, unsafe_allow_html=True)
