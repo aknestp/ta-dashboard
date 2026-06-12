@@ -6,7 +6,7 @@ from datetime import datetime
 import pytz 
 
 # ==================================================
-# CSS MODERN (RESPONSIVE & FULL-WIDTH)
+# CSS MODERN (FIX PADDING & FULL-WIDTH)
 # ==================================================
 def load_css():
     st.markdown("""
@@ -17,20 +17,21 @@ def load_css():
         font-family: 'Plus Jakarta Sans', sans-serif !important; 
     }
     
-    .stApp { 
-        background-color: #f1f5f9; 
+    .stApp { background-color: #f1f5f9; }
+    
+    /* MENGHILANGKAN JARAK KOSONG RAKSASA DI ATAS */
+    .block-container, [data-testid="stAppViewBlockContainer"], .main {
+        max-width: 100% !important;
+        padding-top: 0rem !important;
+        padding-left: 0rem !important;
+        padding-right: 0rem !important;
+        margin-top: 0rem !important;
     }
     
-    /* 1. PERBAIKAN JARAK HEADER (HILANGKAN PADDING BAWAAN STREAMLIT) */
-    .block-container, [data-testid="stAppViewBlockContainer"] {
-        max-width: 100% !important;
-        padding-top: 0 !important;
-        padding-left: 0 !important;
-        padding-right: 0 !important;
-        margin-top: 0 !important;
-    }
-    header[data-testid="stHeader"], div[data-testid="stToolbar"] { 
-        display: none !important; 
+    /* SEMBUNYIKAN HEADER DEFAULT STREAMLIT */
+    header[data-testid="stHeader"] { 
+        display: none !important;
+        height: 0px !important;
     }
 
     .app-shell {
@@ -39,18 +40,14 @@ def load_css():
         padding-bottom: 20px;
         overflow: hidden;
         margin: 0 auto;
-        min-height: 100vh;
     }
 
-    /* HEADER FULL WIDTH */
     .main-header {
         background: #0A6847;
         padding: 25px 5%;
-        display: flex; 
-        justify-content: space-between; 
-        align-items: center; 
-        color: white;
+        display: flex; justify-content: space-between; align-items: center; color: white;
     }
+    
     .header-left { display: flex; align-items: center; gap: 15px; }
     .header-logo {
         background: rgba(255,255,255,0.2); width: 45px; height: 45px;
@@ -69,7 +66,6 @@ def load_css():
     .dot-red { width: 8px; height: 8px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px #ef4444; }
     .header-date { font-size: 12px; color: rgba(255,255,255,0.7); }
 
-    /* STATUS UTAMA */
     .status-container {
         padding: 40px 20px; text-align: center; background: #fafafa;
         margin: 20px 5%; border-radius: 16px; border: 1px solid #e2e8f0;
@@ -84,7 +80,6 @@ def load_css():
 
     .content-wrapper { padding: 0 5%; }
 
-    /* SUMMARY CARD */
     .summary-card {
         background: white; border: 1px solid #e2e8f0; border-radius: 12px;
         padding: 16px; display: flex; align-items: center; gap: 15px; 
@@ -110,13 +105,13 @@ def load_css():
         font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px;
     }
 
-    /* 2. PERBAIKAN TABEL RESPONSIVE & RAPI */
+    /* FIX TABEL AGAR TIDAK TERPISAH */
     .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
     .custom-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; white-space: nowrap; }
     .custom-table th { background: #f8fafc; color: #0A6847; font-weight: 600; padding: 14px 15px; border-bottom: 2px solid #e2e8f0; }
     .custom-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; color: #334155; }
     .custom-table tbody tr:hover { background-color: #f8fafc; }
-    .pill-success { background: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; }
+    .pill-success { background: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; display: inline-block; }
 
     .st-key-fab_trigger { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
     .st-key-fab_trigger button {
@@ -130,9 +125,6 @@ def load_css():
     @media (max-width: 768px) {
         .main-header { flex-direction: column; text-align: center; padding: 20px 15px; gap: 15px; }
         .header-left { flex-direction: column; gap: 10px; }
-        .header-logo { width: 40px; height: 40px; font-size: 20px; }
-        .header-title { font-size: 20px; }
-        .header-subtitle { font-size: 12px; }
         .status-container { padding: 25px 15px; margin: 15px; }
         .status-text-main { font-size: 28px; }
         .custom-box { padding: 15px; margin-top: 15px; }
@@ -151,34 +143,26 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     if "show_popup" not in st.session_state:
         st.session_state.show_popup = False
 
-    # 3. PERBAIKAN LOGIKA STATUS SENSOR REALTIME
-    is_online = "Online" in sensor_status
-    history_df = pd.DataFrame(history_data)
+    # 1. LOGIKA STATUS UTAMA (MURNI DARI BACKEND)
+    is_flowing = "TIDAK" not in status_text.upper()
+    status_icon = "✓" if is_flowing else "✕"
+    status_title = "AIR MENGALIR" if is_flowing else "AIR TIDAK MENGALIR"
+    status_subtitle = "Sistem dalam kondisi normal" if is_flowing else "Distribusi air sedang terhenti"
+    main_color = "#10b981" if is_flowing else "#ef4444"
+    main_bg = "#ecfdf5" if is_flowing else "#fef2f2"
 
-    # Jika Offline, abaikan data terakhir, paksa tampilkan status MATI/TERPUTUS
-    if not is_online:
-        is_flowing = False
-        status_icon = "🔌"
-        status_title = "SENSOR TERPUTUS"
-        status_subtitle = "Alat tidak terhubung ke server. Mengecek koneksi..."
-        main_color = "#64748b" # Warna Abu-abu (Offline)
-        main_bg = "#f1f5f9"
-    else:
-        is_flowing = "TIDAK" not in status_text.upper()
-        status_icon = "✓" if is_flowing else "✕"
-        status_title = "AIR MENGALIR" if is_flowing else "AIR TIDAK MENGALIR"
-        status_subtitle = "Sistem dalam kondisi normal" if is_flowing else "Distribusi air sedang terhenti/gangguan"
-        main_color = "#10b981" if is_flowing else "#ef4444"
-        main_bg = "#ecfdf5" if is_flowing else "#fef2f2"
+    # 2. LOGIKA KONEKSI SENSOR DI KARTU RINGKASAN
+    is_sensor_online = "Online" in sensor_status
+    sensor_txt = "Online" if is_sensor_online else "Offline"
+    sensor_color = "#10b981" if is_sensor_online else "#ef4444"
+    sensor_bg = "#ecfdf5" if is_sensor_online else "#fef2f2"
 
-    dot_class = "dot-green" if is_online else "dot-red"
-    sensor_txt = "Terhubung" if is_online else "Terputus"
     tz_wib = pytz.timezone('Asia/Jakarta')
     waktu_sekarang = datetime.now(tz_wib).strftime("%d %b %Y - %H:%M:%S")
 
     st.markdown('<div class="app-shell">', unsafe_allow_html=True)
 
-    # HEADER
+    # HEADER (Status di pojok kanan atas hanya mendeteksi Web ke Server)
     st.markdown(f"""
         <div class="main-header">
             <div class="header-left">
@@ -189,7 +173,7 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
                 </div>
             </div>
             <div class="header-right">
-                <div class="status-badge"><span class="{dot_class}"></span> {sensor_txt}</div>
+                <div class="status-badge"><span class="dot-green"></span> Server Terhubung</div>
                 <div class="header-date">{waktu_sekarang}</div>
             </div>
         </div>
@@ -206,25 +190,24 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
 
     st.markdown('<div class="content-wrapper">', unsafe_allow_html=True)
 
-    # 4. PERBAIKAN PENGAMBILAN DATA "DURASI TERAKHIR"
+    # AMBIL DATA HISTORI UNTUK DURASI
+    history_df = pd.DataFrame(history_data)
+    durasi_terakhir = "-"
+    if not history_df.empty and "duration" in history_df.columns:
+        durasi_terakhir = str(history_df.iloc[0]["duration"])
+
     c1, c2, c3, c4 = st.columns(4)
     waktu_deteksi = latest_data.get("time", "-")
     kedatangan_terakhir = latest_data.get("last_water_time", "-")
-    
-    # Ambil durasi dari history (siklus terakhir) bukan dari latest_data yang bernilai "Aktif"
-    if not history_df.empty and "duration" in history_df.columns:
-        durasi_terakhir = history_df.iloc[0]["duration"] # Ambil baris pertama di tabel riwayat
-    else:
-        durasi_terakhir = "-"
 
     with c1:
         st.markdown(f"""
         <div class="summary-card">
-            <div class="card-icon" style="color: {main_color}; background: {main_bg};">📶</div>
+            <div class="card-icon" style="color: {sensor_color}; background: {sensor_bg};">📶</div>
             <div>
                 <div class="card-title">Status Sensor</div>
-                <div class="card-value" style="color: {main_color};">{sensor_txt}</div>
-                <div class="card-subtitle">{"Koneksi stabil" if is_online else "Periksa alat"}</div>
+                <div class="card-value" style="color: {sensor_color};">{sensor_txt}</div>
+                <div class="card-subtitle">{"Koneksi stabil" if is_sensor_online else "Periksa alat"}</div>
             </div>
         </div>
         """, unsafe_allow_html=True)
@@ -298,8 +281,8 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
 
     st.markdown("</div>", unsafe_allow_html=True)
 
-    # TABEL RIWAYAT
-    st.markdown("""
+    # TABEL RIWAYAT (Diperbaiki agar 1 String HTML penuh supaya Streamlit tidak memecahnya)
+    table_html = """
         <div class="custom-box" style="margin-bottom: 25px;">
             <div class="section-title" style="margin-bottom: 15px;">📋 Riwayat Distribusi</div>
             <div class="table-container">
@@ -314,32 +297,26 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
                         </tr>
                     </thead>
                     <tbody>
-    """, unsafe_allow_html=True)
+    """
 
     if not history_df.empty:
-        for i, row in history_df.head(5).iterrows(): 
+        for i, row in history_df.head(5).iterrows():
             w_deteksi = str(row.get("time", "-"))
             w_kedatangan = str(row.get("last_water_time", w_deteksi))
             w_durasi = str(row.get("duration", "-"))
-            
-            st.markdown(f"""
-                <tr>
-                    <td>{i+1}</td>
-                    <td>{w_deteksi}</td>
-                    <td>{w_kedatangan}</td>
-                    <td>{w_durasi}</td>
-                    <td><span class="pill-success">Selesai</span></td>
-                </tr>
-            """, unsafe_allow_html=True)
+            table_html += f"<tr><td>{i+1}</td><td>{w_deteksi}</td><td>{w_kedatangan}</td><td>{w_durasi}</td><td><span class='pill-success'>Selesai</span></td></tr>"
     else:
-         st.markdown("<tr><td colspan='5' style='text-align:center; padding: 20px;'>Belum ada riwayat distribusi</td></tr>", unsafe_allow_html=True)
+        table_html += "<tr><td colspan='5' style='padding: 20px;'>Belum ada riwayat distribusi</td></tr>"
 
-    st.markdown("""
+    table_html += """
                     </tbody>
                 </table>
             </div>
         </div>
-    """, unsafe_allow_html=True)
+    """
+    
+    # Render tabel sekali eksekusi (mencegah bug baris kosong di markdown)
+    st.markdown(table_html, unsafe_allow_html=True)
 
     # FOOTER
     st.markdown("""
