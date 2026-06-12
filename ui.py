@@ -57,7 +57,7 @@ def load_css():
     /* BOX GRAFIK & TABEL */
     .custom-box { margin-top: 20px; background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
     .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .section-title { font-size: 18px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; margin: 0; }
     .badge-update { background: #ecfdf5; color: #10b981; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
 
     /* TABEL HTML RAPI */
@@ -148,7 +148,6 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     durasi_terakhir = "-"
     
     if history_data:
-        # Ambil record teratas di history
         first_row = history_data[0]
         durasi_terakhir = str(first_row.get("durasi", "-"))
 
@@ -204,47 +203,80 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         """, unsafe_allow_html=True)
 
 
-    # === TABEL RIWAYAT (Sekarang berada DI ATAS Grafik) ===
+    # ==================================================
+    # TABEL RIWAYAT DENGAN FITUR FILTER
+    # ==================================================
+    st.markdown('<div class="custom-box" style="margin-bottom: 25px;">', unsafe_allow_html=True)
+    
+    # Membagi layout judul dan opsi filter menjadi 2 kolom
+    col_judul, col_filter = st.columns([4, 1])
+    
+    with col_judul:
+        st.markdown('<div class="section-title">📋 Riwayat Distribusi</div>', unsafe_allow_html=True)
+        
+    with col_filter:
+        # Menambahkan Dropdown (Selectbox) dari Streamlit
+        sort_order = st.selectbox(
+            "Filter:",
+            ["Terbaru", "Terlama"],
+            label_visibility="collapsed" # Menyembunyikan label text agar lebih rapi
+        )
+
+    # Struktur Tabel HTML
     html_table = """
-        <div class="custom-box" style="margin-bottom: 25px;">
-            <div class="section-title" style="margin-bottom: 15px;">📋 Riwayat Distribusi</div>
-            <div class="table-container">
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th>No</th>
-                            <th>Tanggal</th>
-                            <th>Jam Mulai</th>
-                            <th>Jam Selesai</th>
-                            <th>Durasi</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
+        <div class="table-container" style="margin-top: 15px;">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>No</th>
+                        <th>Tanggal</th>
+                        <th>Jam Mulai</th>
+                        <th>Jam Selesai</th>
+                        <th>Durasi</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
     """
+
     if history_data:
-        for i, row in enumerate(history_data[:5]):
-            # Mengambil 'id' langsung dari database untuk kolom No
-            nomor_id = str(row.get("id", "-")) 
-            
-            # Mengambil data mentah lainnya
+        # Mengkopi data asli agar tidak merusak variabel asal
+        sorted_history = list(history_data)
+        
+        # Fungsi pembantu untuk mengambil nilai integer ID secara aman
+        def get_id(row):
+            try:
+                return int(row.get("id", 0))
+            except:
+                return 0
+
+        # Logika Pengurutan:
+        # - Jika "Terbaru", ID paling besar di atas (Descending)
+        # - Jika "Terlama", ID paling kecil di atas (Ascending)
+        is_descending = True if sort_order == "Terbaru" else False
+        sorted_history.sort(key=get_id, reverse=is_descending)
+
+        # Loop data yang sudah diurutkan (Maksimal ambil 5 teratas)
+        for i, row in enumerate(sorted_history[:5]):
+            nomor_id = str(row.get("id", "-"))
             tanggal_db = str(row.get("tanggal", "-"))
             jam_mulai_db = str(row.get("jam_mulai", "-"))
             jam_selesai_db = str(row.get("jam_selesai", "-"))
             w_durasi = str(row.get("durasi", "-"))
             w_status = str(row.get("status", "Selesai"))
             
-            # Memasukkan nomor_id ke dalam tag <td> pertama
             html_table += f"<tr><td>{nomor_id}</td><td>{tanggal_db}</td><td>{jam_mulai_db}</td><td>{jam_selesai_db}</td><td>{w_durasi}</td><td><span class='pill-success'>{w_status}</span></td></tr>"
     else:
         html_table += "<tr><td colspan='6' style='padding: 20px;'>Belum ada riwayat distribusi tersedia di database.</td></tr>"
 
-    html_table += "</tbody></table></div></div>"
+    html_table += "</tbody></table></div>"
     
+    # Mencetak (Render) Tabel HTML
     st.markdown(html_table, unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True) # Tutup custom-box tabel
 
 
-    # === GRAFIK REALTIME (Sekarang berada DI BAWAH Tabel) ===
+    # === GRAFIK REALTIME ===
     st.markdown("""
         <div class="custom-box">
             <div class="section-header">
