@@ -325,7 +325,7 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     st.markdown("</div>", unsafe_allow_html=True) 
 
     # === POPUP OPERATOR (GANGGUAN) ===
-    if st.button("🔔", key="fab_trigger", help="Kirim Peringatan Gangguan"):
+    if st.button("⚠️", key="fab_trigger", help="Kirim Peringatan Gangguan"):
         st.session_state.show_popup = True
 
     if st.session_state.show_popup:
