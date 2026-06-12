@@ -16,7 +16,7 @@ def load_css():
     html, body, [class*="css"]  { font-family: 'Plus Jakarta Sans', sans-serif !important; }
     .stApp { background-color: #f1f5f9; }
     
-    /* 1. MENGHAPUS PAKSA JARAK KOSONG DI ATAS HEADER */
+    /* MENGHAPUS PAKSA JARAK KOSONG DI ATAS HEADER */
     .block-container, [data-testid="stAppViewBlockContainer"] {
         padding-top: 0rem !important; padding-bottom: 0rem !important;
         padding-left: 0rem !important; padding-right: 0rem !important;
@@ -148,8 +148,9 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     durasi_terakhir = "-"
     
     if history_data:
+        # Ambil record teratas di history
         first_row = history_data[0]
-        durasi_terakhir = str(first_row.get("durasi", first_row.get("duration", "-")))
+        durasi_terakhir = str(first_row.get("durasi", "-"))
 
     c1, c2, c3, c4 = st.columns(4)
 
@@ -255,10 +256,19 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
 
     if history_data:
         for i, row in enumerate(history_data[:5]):
-            w_deteksi = str(row.get("waktu_deteksi", row.get("time", "-")))
-            w_kedatangan = str(row.get("kedatangan_air", row.get("last_water_time", w_deteksi)))
-            w_durasi = str(row.get("durasi", row.get("duration", "-")))
-            html_table += f"<tr><td>{i+1}</td><td>{w_deteksi}</td><td>{w_kedatangan}</td><td>{w_durasi}</td><td><span class='pill-success'>Selesai</span></td></tr>"
+            # Menyesuaikan dengan format kolom di database: tanggal, jam_mulai, jam_selesai, durasi, status
+            tanggal_db = row.get("tanggal", "-")
+            jam_mulai_db = row.get("jam_mulai", "-")
+            jam_selesai_db = row.get("jam_selesai", "-")
+            
+            # Penggabungan Tanggal dan Jam agar formatnya rapi
+            w_deteksi = f"{tanggal_db} {jam_mulai_db}" if tanggal_db != "-" and jam_mulai_db != "-" else "-"
+            w_kedatangan = f"{tanggal_db} {jam_selesai_db}" if tanggal_db != "-" and jam_selesai_db != "-" else "-"
+            
+            w_durasi = str(row.get("durasi", "-"))
+            w_status = str(row.get("status", "Selesai"))
+            
+            html_table += f"<tr><td>{i+1}</td><td>{w_deteksi}</td><td>{w_kedatangan}</td><td>{w_durasi}</td><td><span class='pill-success'>{w_status}</span></td></tr>"
     else:
         html_table += "<tr><td colspan='5' style='padding: 20px;'>Belum ada riwayat distribusi tersedia di database.</td></tr>"
 
