@@ -222,17 +222,20 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
                     </thead>
                     <tbody>
     """
-
     if history_data:
         for i, row in enumerate(history_data[:5]):
-            # Mengambil data mentah langsung dari database tanpa digabung
+            # Mengambil 'id' langsung dari database untuk kolom No
+            nomor_id = str(row.get("id", "-")) 
+            
+            # Mengambil data mentah lainnya
             tanggal_db = str(row.get("tanggal", "-"))
             jam_mulai_db = str(row.get("jam_mulai", "-"))
             jam_selesai_db = str(row.get("jam_selesai", "-"))
             w_durasi = str(row.get("durasi", "-"))
             w_status = str(row.get("status", "Selesai"))
             
-            html_table += f"<tr><td>{i+1}</td><td>{tanggal_db}</td><td>{jam_mulai_db}</td><td>{jam_selesai_db}</td><td>{w_durasi}</td><td><span class='pill-success'>{w_status}</span></td></tr>"
+            # Memasukkan nomor_id ke dalam tag <td> pertama
+            html_table += f"<tr><td>{nomor_id}</td><td>{tanggal_db}</td><td>{jam_mulai_db}</td><td>{jam_selesai_db}</td><td>{w_durasi}</td><td><span class='pill-success'>{w_status}</span></td></tr>"
     else:
         html_table += "<tr><td colspan='6' style='padding: 20px;'>Belum ada riwayat distribusi tersedia di database.</td></tr>"
 
