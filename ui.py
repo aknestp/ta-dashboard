@@ -245,8 +245,9 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
                     <thead>
                         <tr>
                             <th>No</th>
-                            <th>Waktu Deteksi</th>
-                            <th>Kedatangan Air</th>
+                            <th>Tanggal</th>
+                            <th>Jam Mulai</th>
+                            <th>Jam Selesai</th>
                             <th>Durasi</th>
                             <th>Status</th>
                         </tr>
@@ -256,21 +257,16 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
 
     if history_data:
         for i, row in enumerate(history_data[:5]):
-            # Menyesuaikan dengan format kolom di database: tanggal, jam_mulai, jam_selesai, durasi, status
-            tanggal_db = row.get("tanggal", "-")
-            jam_mulai_db = row.get("jam_mulai", "-")
-            jam_selesai_db = row.get("jam_selesai", "-")
-            
-            # Penggabungan Tanggal dan Jam agar formatnya rapi
-            w_deteksi = f"{tanggal_db} {jam_mulai_db}" if tanggal_db != "-" and jam_mulai_db != "-" else "-"
-            w_kedatangan = f"{tanggal_db} {jam_selesai_db}" if tanggal_db != "-" and jam_selesai_db != "-" else "-"
-            
+            # Mengambil data mentah langsung dari database tanpa digabung
+            tanggal_db = str(row.get("tanggal", "-"))
+            jam_mulai_db = str(row.get("jam_mulai", "-"))
+            jam_selesai_db = str(row.get("jam_selesai", "-"))
             w_durasi = str(row.get("durasi", "-"))
             w_status = str(row.get("status", "Selesai"))
             
-            html_table += f"<tr><td>{i+1}</td><td>{w_deteksi}</td><td>{w_kedatangan}</td><td>{w_durasi}</td><td><span class='pill-success'>{w_status}</span></td></tr>"
+            html_table += f"<tr><td>{i+1}</td><td>{tanggal_db}</td><td>{jam_mulai_db}</td><td>{jam_selesai_db}</td><td>{w_durasi}</td><td><span class='pill-success'>{w_status}</span></td></tr>"
     else:
-        html_table += "<tr><td colspan='5' style='padding: 20px;'>Belum ada riwayat distribusi tersedia di database.</td></tr>"
+        html_table += "<tr><td colspan='6' style='padding: 20px;'>Belum ada riwayat distribusi tersedia di database.</td></tr>"
 
     html_table += "</tbody></table></div></div>"
     
