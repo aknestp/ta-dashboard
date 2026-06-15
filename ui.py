@@ -35,6 +35,36 @@ def load_css():
     .status-container { padding: 30px 15px; text-align: center; background: #fafafa; margin: 20px 5%; border-radius: 16px; border: 1px solid #e2e8f0; }
     .check-circle { color: white; width: 60px; height: 60px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; font-size: 30px; margin-bottom: 15px; }
     .status-text-main { font-size: 28px; font-weight: 800; margin: 0; }
+
+    /* CARD RINGKASAN */
+    .summary-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); height: 100%; }
+    .card-icon { background: #ecfdf5; color: #10b981; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; flex-shrink: 0; }
+    .card-title { font-size: 12px; color: #64748b; margin-bottom: 2px; }
+    .card-value { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
+    .card-subtitle { font-size: 11px; color: #94a3b8; }
+
+    /* BOX GRAFIK & TABEL */
+    .custom-box { margin-top: 20px; background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+    .section-title { font-size: 18px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; margin: 0; }
+    .badge-update { background: #ecfdf5; color: #10b981; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
+
+    /* TABEL HTML RAPI */
+    .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .custom-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; white-space: nowrap; }
+    .custom-table th { background: #f8fafc; color: #0A6847; font-weight: 600; padding: 14px 15px; border-bottom: 2px solid #e2e8f0; }
+    .custom-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; color: #334155; }
+    .custom-table tbody tr:hover { background-color: #f8fafc; }
+    .pill-success { background: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; display: inline-block; }
+
+    /* FLOATING BUTTON */
+    .st-key-fab_trigger { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
+    .st-key-fab_trigger button { width: 60px; height: 60px; border-radius: 50%; background: #ef4444 !important; border: none !important; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4) !important; transition: transform 0.2s !important; }
+    .st-key-fab_trigger button p { font-size: 24px !important; color: white !important; margin: 0 !important; }
+    
+    footer { display: none; }
+
+
     
     /* RESPONSIVE HP */
     @media (max-width: 768px) {
