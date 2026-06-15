@@ -6,7 +6,7 @@ from datetime import datetime
 import pytz 
 
 # ==================================================
-# CSS MODERN (MENGHILANGKAN JARAK & MERAPIKAN TABEL)
+# CSS MODERN (FONT OTOMATIS MENGECIL DI HP)
 # ==================================================
 def load_css():
     st.markdown("""
@@ -16,139 +16,60 @@ def load_css():
     html, body, [class*="css"]  { font-family: 'Plus Jakarta Sans', sans-serif !important; }
     .stApp { background-color: #f1f5f9; }
     
-    /* MENGHAPUS PAKSA JARAK KOSONG DI ATAS HEADER */
     .block-container, [data-testid="stAppViewBlockContainer"] {
-        padding-top: 0rem !important; padding-bottom: 0rem !important;
-        padding-left: 0rem !important; padding-right: 0rem !important;
-        max-width: 100% !important;
+        padding: 0rem !important; max-width: 100% !important;
     }
     header[data-testid="stHeader"] { display: none !important; }
 
-    /* LAYOUT DASAR */
     .app-shell { background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding-bottom: 20px; overflow: hidden; margin: 0 auto; }
     .content-wrapper { padding: 0 5%; }
 
-    /* ==================================================
-       HEADER DESKTOP (LAPTOP) - TETAP SEPERTI SEKARANG
-       ================================================== */
+    /* HEADER LAPTOP */
     .main-header {
-        background: #0A6847; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; color: white; margin-top: 0 !important;
+        background: #0A6847; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; color: white;
     }
     .header-left { display: flex; align-items: center; gap: 15px; }
-    .header-logo { background: rgba(255,255,255,0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; }
-    .header-title { font-size: 26px; font-weight: 700; margin: 0; line-height: 1.2; }
-    .header-subtitle { font-size: 14px; color: rgba(255,255,255,0.8); margin: 0; }
-    
-    /* HEADER KANAN - SEJAJAR (LAPTOP/DESKTOP) */
-    .header-right { 
-        display: flex; 
-        align-items: center; 
-        justify-content: flex-end;
-        gap: 15px; 
-    }
-    .status-badge { 
-        background: rgba(255,255,255,0.15); 
-        padding: 6px 14px; 
-        border-radius: 20px; 
-        font-size: 13px; 
-        display: inline-flex; 
-        align-items: center; 
-        gap: 8px; 
-        margin-bottom: 0 !important; 
-    }
-    .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
-    .header-date { font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 500; }
+    .header-logo { background: rgba(255,255,255,0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; }
+    .header-title { font-size: 26px; font-weight: 700; margin: 0; }
+    .header-right { display: flex; align-items: center; gap: 15px; }
+    .status-badge { background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; }
+    .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; }
+    .header-date { font-size: 13px; font-weight: 500; }
 
-    /* STATUS BANNER */
-    .status-container { padding: 40px 20px; text-align: center; background: #fafafa; margin: 20px 5%; border-radius: 16px; border: 1px solid #e2e8f0; }
-    .check-circle { color: white; width: 75px; height: 75px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; font-size: 38px; margin-bottom: 15px; }
-    .status-text-main { font-size: 42px; font-weight: 800; margin: 0; letter-spacing: -1px; }
-    .status-sub-main { color: #64748b; font-size: 16px; margin-top: 8px; }
+    /* BANNER & CARD */
+    .status-container { padding: 30px 15px; text-align: center; background: #fafafa; margin: 20px 5%; border-radius: 16px; border: 1px solid #e2e8f0; }
+    .status-text-main { font-size: 32px; font-weight: 800; margin: 0; }
+    .summary-card { background: white; padding: 15px; display: flex; align-items: center; gap: 10px; border-radius: 12px; border: 1px solid #e2e8f0; }
+    .card-title { font-size: 11px; color: #64748b; }
+    .card-value { font-size: 16px; font-weight: 700; }
 
-    /* CARD RINGKASAN */
-    .summary-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.02); height: 100%; }
-    .card-icon { background: #ecfdf5; color: #10b981; width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 22px; flex-shrink: 0; }
-    .card-title { font-size: 12px; color: #64748b; margin-bottom: 2px; }
-    .card-value { font-size: 18px; font-weight: 700; color: #0f172a; margin-bottom: 2px; }
-    .card-subtitle { font-size: 11px; color: #94a3b8; }
-
-    /* BOX GRAFIK & TABEL */
-    .custom-box { margin-top: 20px; background: white; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; }
-    .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
-    .section-title { font-size: 18px; font-weight: 700; color: #1e293b; display: flex; align-items: center; gap: 8px; margin: 0; }
-    .badge-update { background: #ecfdf5; color: #10b981; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
-
-    /* TABEL HTML RAPI */
-    .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
-    .custom-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; white-space: nowrap; }
-    .custom-table th { background: #f8fafc; color: #0A6847; font-weight: 600; padding: 14px 15px; border-bottom: 2px solid #e2e8f0; }
-    .custom-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; color: #334155; }
-    .custom-table tbody tr:hover { background-color: #f8fafc; }
-    .pill-success { background: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; display: inline-block; }
-
-    /* FLOATING BUTTON */
-    .st-key-fab_trigger { position: fixed; bottom: 30px; right: 30px; z-index: 9999; }
-    .st-key-fab_trigger button { width: 60px; height: 60px; border-radius: 50%; background: #ef4444 !important; border: none !important; box-shadow: 0 10px 25px rgba(239, 68, 68, 0.4) !important; transition: transform 0.2s !important; }
-    .st-key-fab_trigger button p { font-size: 24px !important; color: white !important; margin: 0 !important; }
-    
-    footer { display: none; }
+    /* TABLE */
+    .table-container { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; }
+    .custom-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
+    .custom-table th { background: #f8fafc; padding: 12px; color: #0A6847; }
+    .custom-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
 
     /* ==================================================
-       RESPONSIVE LAYAR KECIL (HP) - RAPI & TERBACA
+       RESPONSIVE HP (FONT OTOMATIS MENGECIL)
        ================================================== */
     @media (max-width: 768px) {
-        .main-header { 
-            flex-direction: column; 
-            padding: 15px 10px; 
-            gap: 10px;
-        }
+        .main-header { padding: 15px 10px; flex-direction: row; }
+        .header-left { gap: 8px; }
+        .header-logo { width: 28px; height: 28px; font-size: 14px; }
         
-        /* Baris 1: Logo & Judul Utama */
-        .header-left { 
-            flex-direction: row; 
-            justify-content: center; 
-            width: 100%; 
-            gap: 10px; 
-        }
-        .header-logo { width: 30px; height: 30px; font-size: 16px; }
-        .header-title { 
-            font-size: 16px; 
-            white-space: nowrap; 
-            margin: 0;
-        }
-        .header-subtitle { display: none; } 
+        /* JUDUL DIPAKSA MENGECIL AGAR SATU BARIS */
+        .header-title { font-size: 13px !important; white-space: nowrap; }
+        .header-right { gap: 5px; flex-direction: column; align-items: flex-end; }
+        .status-badge { font-size: 8px !important; padding: 2px 6px !important; }
+        .header-date { font-size: 8px !important; }
+
+        .status-text-main { font-size: 18px !important; }
+        .status-sub-main { font-size: 11px !important; }
+
+        .card-value { font-size: 12px !important; }
+        .card-title { font-size: 9px !important; }
         
-        /* Baris 2: Lencana & Tanggal disejajarkan */
-        .header-right { 
-            flex-direction: row; 
-            justify-content: center; 
-            align-items: center;
-            width: 100%; 
-            gap: 12px; 
-        }
-        .status-badge { font-size: 11px; padding: 4px 10px; margin: 0 !important; }
-        .header-date { font-size: 11px; }
-
-        /* Status & Card: Ukuran normal agar nyaman dibaca */
-        .status-container { padding: 20px 15px; margin: 15px 5%; border-radius: 12px; }
-        .check-circle { width: 50px; height: 50px; font-size: 24px; margin-bottom: 10px; }
-        .status-text-main { font-size: 26px; }
-        .status-sub-main { font-size: 14px; margin-top: 5px; }
-
-        .summary-card { padding: 15px; gap: 12px; }
-        .card-icon { width: 38px; height: 38px; font-size: 18px; }
-        .card-title { font-size: 12px; }
-        .card-value { font-size: 16px; }
-        .card-subtitle { font-size: 11px; }
-
-        .custom-box { padding: 15px; margin-top: 15px; }
-        .section-title { font-size: 16px; }
-        .badge-update { font-size: 11px; padding: 4px 10px; }
-        .custom-table th, .custom-table td { padding: 10px; font-size: 12px; }
-        .pill-success { font-size: 11px; padding: 4px 8px; }
-        .content-wrapper { padding: 0 10px; }
-        
-        div[data-testid="stVerticalBlock"] > div { gap: 10px !important; }
+        .custom-table th, .custom-table td { font-size: 10px !important; padding: 6px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
