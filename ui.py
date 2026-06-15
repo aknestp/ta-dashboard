@@ -5,73 +5,77 @@ import requests
 from datetime import datetime
 import pytz 
 
-# ==================================================
-# CSS MODERN (FONT OTOMATIS MENGECIL DI HP)
-# ==================================================
 def load_css():
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
-
     html, body, [class*="css"]  { font-family: 'Plus Jakarta Sans', sans-serif !important; }
     .stApp { background-color: #f1f5f9; }
     
-    .block-container, [data-testid="stAppViewBlockContainer"] {
-        padding: 0rem !important; max-width: 100% !important;
-    }
+    .block-container, [data-testid="stAppViewBlockContainer"] { padding: 0rem !important; max-width: 100% !important; }
     header[data-testid="stHeader"] { display: none !important; }
 
     .app-shell { background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding-bottom: 20px; overflow: hidden; margin: 0 auto; }
     .content-wrapper { padding: 0 5%; }
 
-    /* HEADER LAPTOP */
-    .main-header {
-        background: #0A6847; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; color: white;
-    }
+    /* HEADER DESKTOP */
+    .main-header { background: #0A6847; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; color: white; }
     .header-left { display: flex; align-items: center; gap: 15px; }
-    .header-logo { background: rgba(255,255,255,0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; }
-    .header-title { font-size: 26px; font-weight: 700; margin: 0; }
+    .header-logo { background: rgba(255,255,255,0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; }
+    .header-title-wrapper { display: flex; flex-direction: column; }
+    .header-title { font-size: 20px; font-weight: 700; margin: 0; line-height: 1.2; }
+    .header-subtitle { font-size: 14px; color: rgba(255,255,255,0.9); margin: 0; }
+    
     .header-right { display: flex; align-items: center; gap: 15px; }
     .status-badge { background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; }
     .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; }
     .header-date { font-size: 13px; font-weight: 500; }
 
-    /* BANNER & CARD */
+    /* STATUS BANNER - LINGKARAN ICON */
     .status-container { padding: 30px 15px; text-align: center; background: #fafafa; margin: 20px 5%; border-radius: 16px; border: 1px solid #e2e8f0; }
-    .status-text-main { font-size: 32px; font-weight: 800; margin: 0; }
-    .summary-card { background: white; padding: 15px; display: flex; align-items: center; gap: 10px; border-radius: 12px; border: 1px solid #e2e8f0; }
-    .card-title { font-size: 11px; color: #64748b; }
-    .card-value { font-size: 16px; font-weight: 700; }
-
-    /* TABLE */
-    .table-container { overflow-x: auto; border: 1px solid #e2e8f0; border-radius: 8px; }
-    .custom-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
-    .custom-table th { background: #f8fafc; padding: 12px; color: #0A6847; }
-    .custom-table td { padding: 10px; border-bottom: 1px solid #f1f5f9; }
-
-    /* ==================================================
-       RESPONSIVE HP (FONT OTOMATIS MENGECIL)
-       ================================================== */
+    .check-circle { color: white; width: 60px; height: 60px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; font-size: 30px; margin-bottom: 15px; }
+    .status-text-main { font-size: 28px; font-weight: 800; margin: 0; }
+    
+    /* RESPONSIVE HP */
     @media (max-width: 768px) {
-        .main-header { padding: 15px 10px; flex-direction: row; }
-        .header-left { gap: 8px; }
+        .main-header { padding: 12px 10px; }
         .header-logo { width: 28px; height: 28px; font-size: 14px; }
-        
-        /* JUDUL DIPAKSA MENGECIL AGAR SATU BARIS */
-        .header-title { font-size: 13px !important; white-space: nowrap; }
+        .header-title { font-size: 12px !important; }
+        .header-subtitle { font-size: 12px !important; }
         .header-right { gap: 5px; flex-direction: column; align-items: flex-end; }
         .status-badge { font-size: 8px !important; padding: 2px 6px !important; }
         .header-date { font-size: 8px !important; }
-
-        .status-text-main { font-size: 18px !important; }
-        .status-sub-main { font-size: 11px !important; }
-
-        .card-value { font-size: 12px !important; }
-        .card-title { font-size: 9px !important; }
-        
-        .custom-table th, .custom-table td { font-size: 10px !important; padding: 6px !important; }
+        .status-text-main { font-size: 20px !important; }
     }
     </style>
+    """, unsafe_allow_html=True)
+
+def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_status, server_url):
+    load_css()
+    is_flowing = "TIDAK" not in status_text.upper()
+    main_color = "#10b981" if is_flowing else "#ef4444"
+    status_icon = "✓" if is_flowing else "✕"
+    status_title = "AIR MENGALIR" if is_flowing else "AIR TIDAK MENGALIR"
+
+    st.markdown('<div class="app-shell">', unsafe_allow_html=True)
+    st.markdown(f"""
+        <div class="main-header">
+            <div class="header-left">
+                <div class="header-logo">💧</div>
+                <div class="header-title-wrapper">
+                    <h1 class="header-title">Sistem Peringatan Dini Kedatangan Air Distribusi</h1>
+                    <p class="header-subtitle">Monitoring Distribusi Air Berbasis IoT & Machine Learning</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="status-badge"><span class="dot-green"></span> Server Terhubung</div>
+                <div class="header-date">{datetime.now(pytz.timezone('Asia/Jakarta')).strftime("%d %b %Y - %H:%M")}</div>
+            </div>
+        </div>
+        <div class="status-container">
+            <div class="check-circle" style="background: {main_color};">{status_icon}</div>
+            <h2 class="status-text-main" style="color: {main_color};">{status_title}</h2>
+        </div>
     """, unsafe_allow_html=True)
 
 # ==================================================
