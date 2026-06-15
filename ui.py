@@ -28,7 +28,9 @@ def load_css():
     .app-shell { background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding-bottom: 20px; overflow: hidden; margin: 0 auto; }
     .content-wrapper { padding: 0 5%; }
 
-    /* HEADER DESKTOP */
+    /* ==================================================
+       HEADER DESKTOP (LAPTOP) - TETAP SEPERTI SEKARANG
+       ================================================== */
     .main-header {
         background: #0A6847; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; color: white; margin-top: 0 !important;
     }
@@ -52,7 +54,7 @@ def load_css():
         display: inline-flex; 
         align-items: center; 
         gap: 8px; 
-        margin-bottom: 0 !important; /* Dihilangkan agar rata tengah sejajar */
+        margin-bottom: 0 !important; /* Dihilangkan agar rata tengah sejajar dengan waktu */
     }
     .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
     .header-date { font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 500; }
@@ -92,60 +94,61 @@ def load_css():
     footer { display: none; }
 
     /* ==================================================
-       RESPONSIVE LAYAR KECIL (HP) - SKALA DIPERKECIL & SEBARIS
+       RESPONSIVE LAYAR KECIL (HP) - RAPI & TERBACA
        ================================================== */
     @media (max-width: 768px) {
-        /* Memaksa Header HP Jadi 1 Baris Sejajar */
         .main-header { 
-            flex-direction: row; 
-            padding: 12px 15px; 
+            flex-direction: column; 
+            padding: 15px 10px; 
             gap: 10px;
-            align-items: center;
         }
-        .header-left { gap: 8px; flex: 1; overflow: hidden; }
-        .header-logo { width: 26px; height: 26px; font-size: 14px; }
         
-        /* Memaksa Judul 1 Baris & Menyembunyikan Subtitle */
+        /* Baris 1: Logo & Judul Utama */
+        .header-left { 
+            flex-direction: row; 
+            justify-content: center; 
+            width: 100%; 
+            gap: 10px; 
+        }
+        .header-logo { width: 30px; height: 30px; font-size: 16px; }
         .header-title { 
-            font-size: 14px; 
-            white-space: nowrap; 
-            overflow: hidden; 
-            text-overflow: ellipsis; 
+            font-size: 16px; /* Font cukup besar untuk dibaca */
+            white-space: nowrap; /* Teks tidak terpotong ke bawah */
+            margin: 0;
         }
-        .header-subtitle { display: none; } /* Subtitle disembunyikan di HP */
+        .header-subtitle { display: none; } /* Deskripsi panjang disembunyikan */
         
+        /* Baris 2: Lencana & Tanggal disejajarkan */
         .header-right { 
-            display: flex; 
-            flex-direction: column; /* Badge di atas, Tanggal di bawah agar muat */
-            align-items: flex-end; 
-            gap: 3px; 
+            flex-direction: row; 
+            justify-content: center; 
+            align-items: center;
+            width: 100%; 
+            gap: 12px; 
         }
-        .status-badge { font-size: 9px; padding: 3px 8px; gap: 5px; }
-        .dot-green { width: 6px; height: 6px; }
-        .header-date { font-size: 9px; }
+        .status-badge { font-size: 11px; padding: 4px 10px; margin: 0 !important; }
+        .header-date { font-size: 11px; }
 
-        /* Memperkecil Status Banner Utama */
-        .status-container { padding: 15px 10px; margin: 15px 5%; border-radius: 12px; }
-        .check-circle { width: 40px; height: 40px; font-size: 20px; margin-bottom: 10px; }
-        .status-text-main { font-size: 22px; }
-        .status-sub-main { font-size: 12px; margin-top: 5px; }
+        /* Status & Card: Ukuran normal agar nyaman dibaca */
+        .status-container { padding: 20px 15px; margin: 15px 5%; border-radius: 12px; }
+        .check-circle { width: 50px; height: 50px; font-size: 24px; margin-bottom: 10px; }
+        .status-text-main { font-size: 26px; }
+        .status-sub-main { font-size: 14px; margin-top: 5px; }
 
-        /* Memperkecil Ukuran Kotak-Kotak Kecil (Cards) */
-        .summary-card { padding: 12px; gap: 10px; }
-        .card-icon { width: 32px; height: 32px; font-size: 16px; }
-        .card-title { font-size: 11px; }
-        .card-value { font-size: 14px; }
-        .card-subtitle { font-size: 10px; }
+        .summary-card { padding: 15px; gap: 12px; }
+        .card-icon { width: 38px; height: 38px; font-size: 18px; }
+        .card-title { font-size: 12px; }
+        .card-value { font-size: 16px; }
+        .card-subtitle { font-size: 11px; }
 
-        /* Memperkecil Elemen Tabel dan Grafik */
-        .custom-box { padding: 12px; margin-top: 15px; }
-        .section-title { font-size: 14px; }
-        .badge-update { font-size: 10px; padding: 3px 8px; }
-        .custom-table th, .custom-table td { padding: 8px 10px; font-size: 11px; }
-        .pill-success { font-size: 10px; padding: 4px 8px; }
-        .content-wrapper { padding: 0 15px; }
+        .custom-box { padding: 15px; margin-top: 15px; }
+        .section-title { font-size: 16px; }
+        .badge-update { font-size: 11px; padding: 4px 10px; }
+        .custom-table th, .custom-table td { padding: 10px; font-size: 12px; }
+        .pill-success { font-size: 11px; padding: 4px 8px; }
+        .content-wrapper { padding: 0 10px; }
         
-        div[data-testid="stVerticalBlock"] > div { gap: 8px !important; }
+        div[data-testid="stVerticalBlock"] > div { gap: 10px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
@@ -380,33 +383,4 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         st.session_state.show_popup = True
 
     if st.session_state.show_popup:
-        @st.dialog("⚠️ Kirim Informasi Gangguan")
-        def popup_operator():
-            st.markdown("### Konfirmasi Operator\nInformasi ini akan dikirim ke grup WhatsApp warga.")
-            password = st.text_input("Masukkan Password Operator", type="password")
-            st.warning("Pesan yang akan dikirim:\n\nDistribusi air mengalami gangguan sementara.")
-
-            btn1, btn2 = st.columns(2)
-            with btn1:
-                if st.button("Kirim Informasi ✅", use_container_width=True):
-                    if password == "admin1": 
-                        try:
-                            response = requests.post(
-                                f"{server_url}/send_warning",
-                                json={"message": "Distribusi air mengalami gangguan sementara"},
-                                timeout=5
-                            )
-                            if response.status_code == 200:
-                                st.success("Informasi berhasil dikirim ke grup warga.")
-                            else:
-                                st.error("Gagal mengirim pesan ke server bot.")
-                        except Exception as e:
-                            st.error(f"Error Request: {e}")
-                    else:
-                        st.error("Password salah.")
-            with btn2:
-                if st.button("Batal ❌", use_container_width=True):
-                    st.session_state.show_popup = False
-                    st.rerun()
-
-        popup_operator()
+        @st.dialog
