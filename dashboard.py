@@ -20,9 +20,9 @@ st.set_page_config(
 )
 
 # ==================================================
-# 2. AUTO REFRESH (Berjalan tiap 5 detik)
+# 2. AUTO REFRESH (Berjalan tiap detik)
 # ==================================================
-st_autorefresh(interval=5000, key="refresh")
+st_autorefresh(interval=1000, key="refresh")
 
 # ==================================================
 # 3. GET DATA BACKEND
