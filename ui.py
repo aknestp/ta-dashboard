@@ -80,34 +80,6 @@ def load_css():
     </style>
     """, unsafe_allow_html=True)
 
-def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_status, server_url):
-    load_css()
-    is_flowing = "TIDAK" not in status_text.upper()
-    main_color = "#10b981" if is_flowing else "#ef4444"
-    status_icon = "✓" if is_flowing else "✕"
-    status_title = "AIR MENGALIR" if is_flowing else "AIR TIDAK MENGALIR"
-
-    st.markdown('<div class="app-shell">', unsafe_allow_html=True)
-    st.markdown(f"""
-        <div class="main-header">
-            <div class="header-left">
-                <div class="header-logo">💧</div>
-                <div class="header-title-wrapper">
-                    <h1 class="header-title">Sistem Peringatan Dini Kedatangan Air Distribusi</h1>
-                    <p class="header-subtitle">Monitoring Distribusi Air Berbasis IoT & Machine Learning</p>
-                </div>
-            </div>
-            <div class="header-right">
-                <div class="status-badge"><span class="dot-green"></span> Server Terhubung</div>
-                <div class="header-date">{datetime.now(pytz.timezone('Asia/Jakarta')).strftime("%d %b %Y - %H:%M")}</div>
-            </div>
-        </div>
-        <div class="status-container">
-            <div class="check-circle" style="background: {main_color};">{status_icon}</div>
-            <h2 class="status-text-main" style="color: {main_color};">{status_title}</h2>
-        </div>
-    """, unsafe_allow_html=True)
-
 # ==================================================
 # FUNGSI RENDER (DIPANGGIL DARI DASHBOARD.PY)
 # ==================================================
@@ -140,7 +112,7 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
             <div class="header-left">
                 <div class="header-logo">💧</div>
                 <div>
-                    <h1 class="header-title">Sistem Peringatan Dini Air</h1>
+                    <h1 class="header-title">Sistem Peringatan Dini Kedatangan Air Distribusi</h1>
                     <p class="header-subtitle">Monitoring Distribusi Air Berbasis IoT & Machine Learning</p>
                 </div>
             </div>
