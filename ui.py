@@ -6,7 +6,7 @@ from datetime import datetime
 import pytz 
 
 # ==================================================
-# CSS MODERN (MENGHILANGKAN JARAK & MERAPIKAN TABEL)
+# CSS MODERN (RESPONSIVE KHUSUS MOBILE DIPERBAIKI)
 # ==================================================
 def load_css():
     st.markdown("""
@@ -75,14 +75,39 @@ def load_css():
     
     footer { display: none; }
 
-    /* RESPONSIVE LAYAR KECIL */
+    /* ==================================================
+       RESPONSIVE LAYAR KECIL (DIPERBAIKI)
+       ================================================== */
     @media (max-width: 768px) {
-        .main-header { flex-direction: column; text-align: center; padding: 20px 15px; gap: 15px; }
-        .header-left { flex-direction: column; gap: 10px; }
-        .status-container { padding: 25px 15px; margin: 15px; }
-        .status-text-main { font-size: 28px; }
-        .custom-box { padding: 15px; margin-top: 15px; }
-        .content-wrapper { padding: 0 15px; }
+        /* HEADER - Diperkecil & Disesuaikan */
+        .main-header { flex-direction: column; text-align: center; padding: 15px 10px; gap: 12px; }
+        .header-left { flex-direction: column; gap: 6px; }
+        .header-logo { width: 35px; height: 35px; font-size: 18px; }
+        .header-title { font-size: 18px; line-height: 1.3; }
+        .header-subtitle { font-size: 11px; }
+        
+        /* POSISI TANGGAL & STATUS SERVER - Rata Tengah Sejajar */
+        .header-right { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; }
+        .status-badge { font-size: 11px; padding: 4px 10px; margin-bottom: 0; }
+        .header-date { font-size: 11px; }
+
+        /* STATUS UTAMA - Lebih Kompak */
+        .status-container { padding: 20px 10px; margin: 15px 5%; border-radius: 12px; }
+        .check-circle { width: 50px; height: 50px; font-size: 24px; margin-bottom: 10px; }
+        .status-text-main { font-size: 24px; }
+        .status-sub-main { font-size: 13px; margin-top: 5px; }
+
+        /* CARD RINGKASAN - Dikecilkan */
+        .summary-card { padding: 12px; gap: 10px; }
+        .card-icon { width: 35px; height: 35px; font-size: 18px; }
+        .card-title { font-size: 11px; }
+        .card-value { font-size: 15px; }
+        .card-subtitle { font-size: 10px; }
+
+        /* BAGIAN BAWAH */
+        .custom-box { padding: 12px; margin-top: 15px; }
+        .section-title { font-size: 16px; }
+        .content-wrapper { padding: 0 10px; }
         div[data-testid="stVerticalBlock"] > div { gap: 10px !important; }
     }
     </style>
@@ -208,18 +233,16 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     # ==================================================
     st.markdown('<div class="custom-box" style="margin-bottom: 25px;">', unsafe_allow_html=True)
     
-    # Membagi layout judul dan opsi filter menjadi 2 kolom
     col_judul, col_filter = st.columns([4, 1])
     
     with col_judul:
         st.markdown('<div class="section-title">📋 Riwayat Distribusi</div>', unsafe_allow_html=True)
         
     with col_filter:
-        # Menambahkan Dropdown (Selectbox) dari Streamlit
         sort_order = st.selectbox(
             "Filter:",
             ["Terbaru", "Terlama"],
-            label_visibility="collapsed" # Menyembunyikan label text agar lebih rapi
+            label_visibility="collapsed" 
         )
 
     # Struktur Tabel HTML
@@ -240,23 +263,15 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     """
 
     if history_data:
-        # Mengkopi data asli agar tidak merusak variabel asal
         sorted_history = list(history_data)
         
-        # Fungsi pembantu untuk mengambil nilai integer ID secara aman
         def get_id(row):
-            try:
-                return int(row.get("id", 0))
-            except:
-                return 0
+            try: return int(row.get("id", 0))
+            except: return 0
 
-        # Logika Pengurutan:
-        # - Jika "Terbaru", ID paling besar di atas (Descending)
-        # - Jika "Terlama", ID paling kecil di atas (Ascending)
         is_descending = True if sort_order == "Terbaru" else False
         sorted_history.sort(key=get_id, reverse=is_descending)
 
-        # Loop data yang sudah diurutkan (Maksimal ambil 5 teratas)
         for i, row in enumerate(sorted_history[:5]):
             nomor_id = str(row.get("id", "-"))
             tanggal_db = str(row.get("tanggal", "-"))
@@ -271,9 +286,8 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
 
     html_table += "</tbody></table></div>"
     
-    # Mencetak (Render) Tabel HTML
     st.markdown(html_table, unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True) # Tutup custom-box tabel
+    st.markdown('</div>', unsafe_allow_html=True)
 
 
     # === GRAFIK REALTIME ===
@@ -325,7 +339,7 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     st.markdown("</div>", unsafe_allow_html=True) 
 
     # === POPUP OPERATOR (GANGGUAN) ===
-    if st.button("⚠️", key="fab_trigger", help="Kirim Peringatan Gangguan"):
+    if st.button("🔔", key="fab_trigger", help="Kirim Peringatan Gangguan"):
         st.session_state.show_popup = True
 
     if st.session_state.show_popup:
