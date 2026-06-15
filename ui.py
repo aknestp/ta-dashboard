@@ -6,7 +6,7 @@ from datetime import datetime
 import pytz 
 
 # ==================================================
-# CSS MODERN (RESPONSIVE KHUSUS MOBILE DIPERBAIKI)
+# CSS MODERN (MENGHILANGKAN JARAK & MERAPIKAN TABEL)
 # ==================================================
 def load_css():
     st.markdown("""
@@ -28,7 +28,7 @@ def load_css():
     .app-shell { background: #ffffff; box-shadow: 0 4px 20px rgba(0,0,0,0.05); padding-bottom: 20px; overflow: hidden; margin: 0 auto; }
     .content-wrapper { padding: 0 5%; }
 
-    /* HEADER */
+    /* HEADER DESKTOP */
     .main-header {
         background: #0A6847; padding: 20px 5%; display: flex; justify-content: space-between; align-items: center; color: white; margin-top: 0 !important;
     }
@@ -36,10 +36,26 @@ def load_css():
     .header-logo { background: rgba(255,255,255,0.2); width: 45px; height: 45px; border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; flex-shrink: 0; }
     .header-title { font-size: 26px; font-weight: 700; margin: 0; line-height: 1.2; }
     .header-subtitle { font-size: 14px; color: rgba(255,255,255,0.8); margin: 0; }
-    .header-right { text-align: right; }
-    .status-badge { background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; font-size: 13px; display: inline-flex; align-items: center; gap: 8px; margin-bottom: 5px; }
+    
+    /* HEADER KANAN - SEJAJAR (LAPTOP/DESKTOP) */
+    .header-right { 
+        display: flex; 
+        align-items: center; 
+        justify-content: flex-end;
+        gap: 15px; 
+    }
+    .status-badge { 
+        background: rgba(255,255,255,0.15); 
+        padding: 6px 14px; 
+        border-radius: 20px; 
+        font-size: 13px; 
+        display: inline-flex; 
+        align-items: center; 
+        gap: 8px; 
+        margin-bottom: 0 !important; /* Dihilangkan agar rata tengah sejajar */
+    }
     .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
-    .header-date { font-size: 12px; color: rgba(255,255,255,0.7); }
+    .header-date { font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 500; }
 
     /* STATUS BANNER */
     .status-container { padding: 40px 20px; text-align: center; background: #fafafa; margin: 20px 5%; border-radius: 16px; border: 1px solid #e2e8f0; }
@@ -76,39 +92,60 @@ def load_css():
     footer { display: none; }
 
     /* ==================================================
-       RESPONSIVE LAYAR KECIL (DIPERBAIKI)
+       RESPONSIVE LAYAR KECIL (HP) - SKALA DIPERKECIL & SEBARIS
        ================================================== */
     @media (max-width: 768px) {
-        /* HEADER - Diperkecil & Disesuaikan */
-        .main-header { flex-direction: column; text-align: center; padding: 15px 10px; gap: 12px; }
-        .header-left { flex-direction: column; gap: 6px; }
-        .header-logo { width: 35px; height: 35px; font-size: 18px; }
-        .header-title { font-size: 18px; line-height: 1.3; }
-        .header-subtitle { font-size: 11px; }
+        /* Memaksa Header HP Jadi 1 Baris Sejajar */
+        .main-header { 
+            flex-direction: row; 
+            padding: 12px 15px; 
+            gap: 10px;
+            align-items: center;
+        }
+        .header-left { gap: 8px; flex: 1; overflow: hidden; }
+        .header-logo { width: 26px; height: 26px; font-size: 14px; }
         
-        /* POSISI TANGGAL & STATUS SERVER - Rata Tengah Sejajar */
-        .header-right { display: flex; flex-direction: column; align-items: center; gap: 4px; width: 100%; }
-        .status-badge { font-size: 11px; padding: 4px 10px; margin-bottom: 0; }
-        .header-date { font-size: 11px; }
+        /* Memaksa Judul 1 Baris & Menyembunyikan Subtitle */
+        .header-title { 
+            font-size: 14px; 
+            white-space: nowrap; 
+            overflow: hidden; 
+            text-overflow: ellipsis; 
+        }
+        .header-subtitle { display: none; } /* Subtitle disembunyikan di HP */
+        
+        .header-right { 
+            display: flex; 
+            flex-direction: column; /* Badge di atas, Tanggal di bawah agar muat */
+            align-items: flex-end; 
+            gap: 3px; 
+        }
+        .status-badge { font-size: 9px; padding: 3px 8px; gap: 5px; }
+        .dot-green { width: 6px; height: 6px; }
+        .header-date { font-size: 9px; }
 
-        /* STATUS UTAMA - Lebih Kompak */
-        .status-container { padding: 20px 10px; margin: 15px 5%; border-radius: 12px; }
-        .check-circle { width: 50px; height: 50px; font-size: 24px; margin-bottom: 10px; }
-        .status-text-main { font-size: 24px; }
-        .status-sub-main { font-size: 13px; margin-top: 5px; }
+        /* Memperkecil Status Banner Utama */
+        .status-container { padding: 15px 10px; margin: 15px 5%; border-radius: 12px; }
+        .check-circle { width: 40px; height: 40px; font-size: 20px; margin-bottom: 10px; }
+        .status-text-main { font-size: 22px; }
+        .status-sub-main { font-size: 12px; margin-top: 5px; }
 
-        /* CARD RINGKASAN - Dikecilkan */
+        /* Memperkecil Ukuran Kotak-Kotak Kecil (Cards) */
         .summary-card { padding: 12px; gap: 10px; }
-        .card-icon { width: 35px; height: 35px; font-size: 18px; }
+        .card-icon { width: 32px; height: 32px; font-size: 16px; }
         .card-title { font-size: 11px; }
-        .card-value { font-size: 15px; }
+        .card-value { font-size: 14px; }
         .card-subtitle { font-size: 10px; }
 
-        /* BAGIAN BAWAH */
+        /* Memperkecil Elemen Tabel dan Grafik */
         .custom-box { padding: 12px; margin-top: 15px; }
-        .section-title { font-size: 16px; }
-        .content-wrapper { padding: 0 10px; }
-        div[data-testid="stVerticalBlock"] > div { gap: 10px !important; }
+        .section-title { font-size: 14px; }
+        .badge-update { font-size: 10px; padding: 3px 8px; }
+        .custom-table th, .custom-table td { padding: 8px 10px; font-size: 11px; }
+        .pill-success { font-size: 10px; padding: 4px 8px; }
+        .content-wrapper { padding: 0 15px; }
+        
+        div[data-testid="stVerticalBlock"] > div { gap: 8px !important; }
     }
     </style>
     """, unsafe_allow_html=True)
