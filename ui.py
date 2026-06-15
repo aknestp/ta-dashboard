@@ -54,7 +54,7 @@ def load_css():
         display: inline-flex; 
         align-items: center; 
         gap: 8px; 
-        margin-bottom: 0 !important; /* Dihilangkan agar rata tengah sejajar dengan waktu */
+        margin-bottom: 0 !important; 
     }
     .dot-green { width: 8px; height: 8px; background: #4ade80; border-radius: 50%; box-shadow: 0 0 8px #4ade80; }
     .header-date { font-size: 13px; color: rgba(255,255,255,0.9); font-weight: 500; }
@@ -112,11 +112,11 @@ def load_css():
         }
         .header-logo { width: 30px; height: 30px; font-size: 16px; }
         .header-title { 
-            font-size: 16px; /* Font cukup besar untuk dibaca */
-            white-space: nowrap; /* Teks tidak terpotong ke bawah */
+            font-size: 16px; 
+            white-space: nowrap; 
             margin: 0;
         }
-        .header-subtitle { display: none; } /* Deskripsi panjang disembunyikan */
+        .header-subtitle { display: none; } 
         
         /* Baris 2: Lencana & Tanggal disejajarkan */
         .header-right { 
@@ -383,4 +383,33 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         st.session_state.show_popup = True
 
     if st.session_state.show_popup:
-        @st.dialog
+        @st.dialog("⚠️ Kirim Informasi Gangguan")
+        def popup_operator():
+            st.markdown("### Konfirmasi Operator\nInformasi ini akan dikirim ke grup WhatsApp warga.")
+            password = st.text_input("Masukkan Password Operator", type="password")
+            st.warning("Pesan yang akan dikirim:\n\nDistribusi air mengalami gangguan sementara.")
+
+            btn1, btn2 = st.columns(2)
+            with btn1:
+                if st.button("Kirim Informasi ✅", use_container_width=True):
+                    if password == "admin1": 
+                        try:
+                            response = requests.post(
+                                f"{server_url}/send_warning",
+                                json={"message": "Distribusi air mengalami gangguan sementara"},
+                                timeout=5
+                            )
+                            if response.status_code == 200:
+                                st.success("Informasi berhasil dikirim ke grup warga.")
+                            else:
+                                st.error("Gagal mengirim pesan ke server bot.")
+                        except Exception as e:
+                            st.error(f"Error Request: {e}")
+                    else:
+                        st.error("Password salah.")
+            with btn2:
+                if st.button("Batal ❌", use_container_width=True):
+                    st.session_state.show_popup = False
+                    st.rerun()
+
+        popup_operator()
