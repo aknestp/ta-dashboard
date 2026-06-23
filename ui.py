@@ -143,7 +143,44 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         first_row = history_data[0]
         durasi_terakhir = str(first_row.get("durasi", "-"))
 
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3 = st.columns(3)
+    c4, c5, c6 = st.columns(3)
+    
+    # ==================================================
+    # STATISTIK HARI INI
+    # ==================================================
+    
+    today_str = datetime.now(tz_wib).strftime("%Y-%m-%d")
+    
+    total_distribusi_hari_ini = 0
+    total_detik_hari_ini = 0
+    
+    for row in history_data:
+    
+        tanggal = str(row.get("tanggal", ""))
+    
+        if tanggal == today_str:
+    
+            total_distribusi_hari_ini += 1
+    
+            try:
+                durasi = str(row.get("durasi", "00:00:00"))
+    
+                h, m, s = map(int, durasi.split(":"))
+    
+                total_detik_hari_ini += (
+                    h * 3600 +
+                    m * 60 +
+                    s
+                )
+    
+            except:
+                pass
+    
+    jam = total_detik_hari_ini // 3600
+    menit = (total_detik_hari_ini % 3600) // 60
+    
+    total_durasi_hari_ini = f"{jam}j {menit}m"
 
     # === KARTU INFORMASI ===
     with c1:
@@ -194,6 +231,41 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         </div>
         """, unsafe_allow_html=True)
 
+    with c5:
+    st.markdown(f"""
+    <div class="summary-card">
+        <div class="card-icon">📊</div>
+        <div>
+            <div class="card-title">
+                Distribusi Hari Ini
+            </div>
+            <div class="card-value">
+                {total_distribusi_hari_ini}
+            </div>
+            <div class="card-subtitle">
+                Total siklus distribusi
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    with c6:
+    st.markdown(f"""
+    <div class="summary-card">
+        <div class="card-icon">⌛</div>
+        <div>
+            <div class="card-title">
+                Durasi Hari Ini
+            </div>
+            <div class="card-value">
+                {total_durasi_hari_ini}
+            </div>
+            <div class="card-subtitle">
+                Akumulasi distribusi
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
 
     # ==================================================
     # TABEL RIWAYAT DENGAN FITUR FILTER
