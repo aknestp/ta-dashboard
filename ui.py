@@ -232,40 +232,40 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         """, unsafe_allow_html=True)
 
     with c5:
-    st.markdown(f"""
-    <div class="summary-card">
-        <div class="card-icon">📊</div>
-        <div>
-            <div class="card-title">
-                Distribusi Hari Ini
-            </div>
-            <div class="card-value">
-                {total_distribusi_hari_ini}
-            </div>
-            <div class="card-subtitle">
-                Total siklus distribusi
+        st.markdown(f"""
+        <div class="summary-card">
+            <div class="card-icon">📊</div>
+            <div>
+                <div class="card-title">
+                    Distribusi Hari Ini
+                </div>
+                <div class="card-value">
+                    {total_distribusi_hari_ini}
+                </div>
+                <div class="card-subtitle">
+                    Total siklus distribusi
+                </div>
             </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
     with c6:
-    st.markdown(f"""
-    <div class="summary-card">
-        <div class="card-icon">⌛</div>
-        <div>
-            <div class="card-title">
-                Durasi Hari Ini
-            </div>
-            <div class="card-value">
-                {total_durasi_hari_ini}
-            </div>
-            <div class="card-subtitle">
-                Akumulasi distribusi
+        st.markdown(f"""
+        <div class="summary-card">
+            <div class="card-icon">⌛</div>
+            <div>
+                <div class="card-title">
+                    Durasi Hari Ini
+                </div>
+                <div class="card-value">
+                    {total_durasi_hari_ini}
+                </div>
+                <div class="card-subtitle">
+                    Akumulasi distribusi
+                </div>
             </div>
         </div>
-    </div>
-    """, unsafe_allow_html=True)
+        """, unsafe_allow_html=True)
 
     # ==================================================
     # TABEL RIWAYAT DENGAN FITUR FILTER
