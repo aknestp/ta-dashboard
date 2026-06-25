@@ -141,7 +141,7 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
     
     if history_data:
         first_row = history_data[0]
-        Kedatangan_terakhir = str(first_row.get("jam_mulai", "-"))
+        kedatangan_terakhir = str(first_row.get("jam_mulai", "-"))
         durasi_terakhir = str(first_row.get("durasi", "-"))
 
     c1, c2, c3 = st.columns(3)
