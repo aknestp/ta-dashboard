@@ -136,11 +136,12 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
 
     # === AMBIL DATA WAKTU DAN DURASI ===
     waktu_deteksi = latest_data.get("time", "-")
-    kedatangan_terakhir = latest_data.get("last_water_time", "-")
+    kedatangan_terakhir = "-"
     durasi_terakhir = "-"
     
     if history_data:
         first_row = history_data[0]
+        Kedatangan_terakhir = str(first_row.get("jam_mulai", "-"))
         durasi_terakhir = str(first_row.get("durasi", "-"))
 
     c1, c2, c3 = st.columns(3)
