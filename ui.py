@@ -50,9 +50,10 @@ def load_css():
     .badge-update { background: #ecfdf5; color: #10b981; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; display: inline-flex; align-items: center; gap: 6px; }
 
     /* TABEL HTML RAPI */
-    .table-container { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; }
+    .table-container {overflow-x: auto; overflow-y: auto; max-height: 360px; border-radius: 8px; border: 1px solid #e2e8f0;}
     .custom-table { width: 100%; border-collapse: collapse; font-size: 14px; text-align: center; white-space: nowrap; }
     .custom-table th { background: #f8fafc; color: #0A6847; font-weight: 600; padding: 14px 15px; border-bottom: 2px solid #e2e8f0; }
+    .custom-table thead th{position: sticky; top: 0; background: #f8fafc; z-index: 10;}
     .custom-table td { padding: 12px 15px; border-bottom: 1px solid #f1f5f9; color: #334155; }
     .custom-table tbody tr:hover { background-color: #f8fafc; }
     .pill-success { background: #dcfce7; color: #166534; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 12px; display: inline-block; }
@@ -63,8 +64,6 @@ def load_css():
     .st-key-fab_trigger button p { font-size: 24px !important; color: white !important; margin: 0 !important; }
     
     footer { display: none; }
-
-
     
     /* RESPONSIVE HP */
     @media (max-width: 768px) {
@@ -312,7 +311,7 @@ def render_dashboard(latest_data, chart_data, history_data, status_text, sensor_
         is_descending = True if sort_order == "Terbaru" else False
         sorted_history.sort(key=get_id, reverse=is_descending)
 
-        for i, row in enumerate(sorted_history[:5]):
+        for i, row in enumerate(sorted_history):
             nomor_id = str(row.get("id", "-"))
             tanggal_db = str(row.get("tanggal", "-"))
             jam_mulai_db = str(row.get("jam_mulai", "-"))
